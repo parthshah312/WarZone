@@ -1,0 +1,64 @@
+<changelist name="Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1" date="1710551220487" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Merge at 2024-03-15, 9:06 p.m. [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/controller/GameHelper.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/controller/GameHelper.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/GameHelper.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/view/App.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/view/App.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/App.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/MainPlayPhase.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/MainPlayPhase.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/MainPlayPhase.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/GameMap.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/GameMap.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/GameMap.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/AllotArmies.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/AllotArmies.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/AllotArmies.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/controller/GamePhaseManagement.class" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/controller/Game.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/controller/Game.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/Game.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/EditGame.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/EditGame.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/EditGame.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/Continent.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Continent.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/Continent.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/Order.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Order.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/Order.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/GameRunnerEngine.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/GameRunnerEngine.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/GameRunnerEngine.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/ValidateMap.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/ValidateMap.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_9_06 p_m__[Changes]1/ValidateMap.class" />
+  </binary>
+</changelist>

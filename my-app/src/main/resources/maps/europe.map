@@ -1,0 +1,67 @@
+name europe Map
+
+[files]
+
+[continents]
+East_Europe 4 magenta
+North_Europe 5 red
+South_Europe 5 green
+West_Europe 3 blue
+AAAA 3 000
+ABCD 3 000
+
+[territories]
+1 Majorca 4 184 319
+2 Spain 4 96 285
+3 Germany 1 261 149
+4 Poland 1 346 141
+5 Portugal 4 38 290
+6 Scotland 2 158 44
+7 Hungary 3 347 220
+8 Denmark 1 275 76
+9 Corsica 3 242 286
+10 Luxembourg 4 227 172
+11 XYZ 6 0 0
+12 N_Ireland 2 125 70
+13 France 4 176 202
+14 Slovakia 1 356 190
+15 Italy 3 264 249
+16 Czech_Rep 1 308 173
+17 England 2 164 126
+18 Sardinia 3 240 321
+19 BBB 5 0 0
+20 Switzerland 3 233 217
+21 Netherlands 2 226 128
+22 Wales 2 141 109
+23 Belgum 2 213 153
+24 Rep_Ireland 2 106 90
+25 Sicily 3 294 363
+26 Austria 3 306 210
+
+[borders]
+1 2 18 9 
+2 1 5 13 24 
+3 16 8 20 4 21 10 23 26 
+4 16 8 3 14 
+5 2 
+6 17 8 12 
+7 26 14 
+8 17 4 3 6 
+9 1 18 
+10 3 13 23 
+11 23 
+12 17 6 
+13 2 17 20 10 23 
+14 16 4 26 7 
+15 18 20 25 26 
+16 3 4 26 14 
+17 8 21 13 12 23 22 6 24 
+18 1 9 25 15 
+19 23 
+20 3 13 26 15 
+21 17 3 23 
+22 17 24 
+23 17 19 3 10 21 11 13 
+24 2 17 22 
+25 18 15 
+26 16 20 3 14 15 7 

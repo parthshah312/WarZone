@@ -1,0 +1,164 @@
+<changelist name="Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]" date="1710549816013" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Merge at 2024-03-15, 8:41 p.m. [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/AllotArmiesTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/AllotArmiesTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/RemoveOrderTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/RemoveOrderTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/GameRunnerEngine.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/GameRunnerEngine.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/GameRunnerEngine.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/my-app-1.0-SNAPSHOT.jar" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/my-app-1.0-SNAPSHOT.jar" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/controller/GameHelper.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/controller/GameHelper.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/GameHelper.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/GameMap.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/GameMap.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/GameMap.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Diplomacy.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Diplomacy.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/ValidateMapTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/ValidateMapTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/com/mycompany/app/AppTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/AppTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/controller/Game.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/controller/Game.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Game.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/Continent.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Continent.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Continent.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/order1.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/order1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/AddPlayerTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/AddPlayerTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/AddOrderTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/AddOrderTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Airlift.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Airlift.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/AllotArmies.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/AllotArmies.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/AllotArmies.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/controller/GamePhaseManagement.class" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/EditGame.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/EditGame.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/ContinentTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/ContinentTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Blockade.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Blockade.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/LoadMapTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/LoadMapTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/ValidateMap.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/ValidateMap.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/ValidateMap.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Card.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Card.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/view/App.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/view/App.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/App.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/MainPlayPhase.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/MainPlayPhase.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/AssignTerritoryDetailsTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/AssignTerritoryDetailsTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/src/main/Doc/Architectural_design_Build_1.pdf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Architectural_design_Build_1.pdf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/OrderTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/OrderTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/test-classes/RemovePlayerTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/RemovePlayerTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Bomb.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Bomb.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="my-app/target/classes/model/Order.class" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Order.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Order.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="my-app/target/classes/model/Advance.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2024-03-15,_8_41 p_m__[Changes]/Advance.class" />
+  </binary>
+</changelist>

@@ -1,0 +1,2230 @@
+Index: my-app/src/main/java/model/AllotArmies.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\n\n/**\n * it basically assign the armies as per the rules\n */\npublic class AllotArmies {\n    /**\n     * @param p_player current player\n     */\n    public static void allotArmies(Player p_player){\n        int l_totalReinforcementArmies;\n        l_totalReinforcementArmies = 6;\n        p_player.setOwnedArmies(l_totalReinforcementArmies);\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/src/main/java/model/AllotArmies.java b/my-app/src/main/java/model/AllotArmies.java
+--- a/my-app/src/main/java/model/AllotArmies.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/src/main/java/model/AllotArmies.java	(date 1710551194506)
+@@ -8,8 +8,22 @@
+      * @param p_player current player
+      */
+     public static void allotArmies(Player p_player){
++        int l_totalControlValue = 0;
+         int l_totalReinforcementArmies;
+-        l_totalReinforcementArmies = 6;
++        if(p_player.getOwnedTerritories().size() >= 9){
++            if(p_player.getOwnedContinents().size()> 0){
++                for(Continent l_c:p_player.getOwnedContinents().values()){
++                    l_totalControlValue += l_c.d_ControlValue;
++                }
++                l_totalReinforcementArmies = (int)(p_player.getOwnedTerritories().size()/3) + l_totalControlValue;
++            }
++            else{
++                l_totalReinforcementArmies = (int)(p_player.getOwnedTerritories().size()/3);
++            }
++        }
++        else{
++            l_totalReinforcementArmies = 3;
++        }
+         p_player.setOwnedArmies(l_totalReinforcementArmies);
+     }
+ }
+\ No newline at end of file
+Index: my-app/.idea/modules.xml
+===================================================================
+diff --git a/my-app/.idea/modules.xml b/my-app/.idea/modules.xml
+deleted file mode 100644
+--- a/my-app/.idea/modules.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ /dev/null	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="ProjectModuleManager">
+-    <modules>
+-      <module fileurl="file://$PROJECT_DIR$/my-app.iml" filepath="$PROJECT_DIR$/my-app.iml" />
+-    </modules>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: my-app/src/main/java/controller/GamePhaseManagement.java
+===================================================================
+diff --git a/my-app/src/main/java/controller/GamePhaseManagement.java b/my-app/src/main/java/controller/GamePhaseManagement.java
+deleted file mode 100644
+--- a/my-app/src/main/java/controller/GamePhaseManagement.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ /dev/null	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
+@@ -1,81 +0,0 @@
+-package controller;
+-
+-import enumClass.GamePhase;
+-import model.GameMap;
+-import model.GameRunnerEngine;
+-
+-
+-/**
+- * 
+- * Game Phase Manager
+- */
+-public class GamePhaseManagement {
+-
+-    /**
+-     * 
+-     * Checks the command passed in command line
+-     * 
+-     * @param l_commandName Name of the command
+-     * @param l_data first parameter of command
+-     * @param lData  second parameter of command
+-     * @param l_mapName name of the map
+-     * @param d_Map map object
+-     * @param d_RunG gameRnnner object
+-     * @param d_GameGamePhase gamePhaseManagement object 
+-     * @return communication
+-     */
+-    public static Communication gamePhaseNULL(String l_commandName, String[] l_data, String[] lData, String l_mapName, GameMap d_Map, GameRunnerEngine d_RunG, GamePhase d_GameGamePhase){
+-
+-        switch (l_commandName) {
+-            case "editmap":
+-                try {
+-                    if (l_data[1] != "") {
+-                        if (GameHelper.isValidMap(l_data[1])) {
+-                            l_mapName = l_data[1];
+-                            d_Map = d_RunG.editMap(l_mapName);
+-                            System.out.println("Edit Map: " + l_mapName);
+-                            d_GameGamePhase = GamePhase.EDITMAP;
+-                        } else {
+-                            System.out.println("----- Map is not valid !!!  -----");
+-                        }
+-                    }
+-                } catch (ArrayIndexOutOfBoundsException e) {
+-                    System.out.println("------ Incorrect command Try again with  \"editmap filename.map\" ------");
+-                }
+-                break;
+-
+-            case "loadmap":
+-                try {
+-                    if (l_data[1] != null) {
+-                        if (GameHelper.isValidMap(l_data[1])) {
+-                            l_mapName = l_data[1];
+-                            d_Map = d_RunG.loadMap(l_mapName);
+-                            if (d_Map != null) {
+-                                if (!d_Map.d_Valid) {
+-                                    System.out.println("----- Map is not valid !!! -----");
+-                                    d_GameGamePhase = GamePhase.NULL;
+-                                } else {
+-                                    System.out.println("----- Map Validated !!!! -----");
+-                                    System.out.println("----  You can start adding players :- !!!! ----");
+-                                    d_GameGamePhase = GamePhase.STARTUP;
+-                                }
+-                            } else {
+-                                d_GameGamePhase = GamePhase.NULL;
+-                            }
+-                        } else {
+-                            System.out.println("----- Map is not valid !!! -----");
+-                        }
+-                    }
+-                } catch (Exception e) {
+-                    System.out.println("------ Incorrect command Try again with  \"loadmap filename.map\" ------");
+-
+-                }
+-                break;
+-            default:
+-                System.out.println("----- Try LoadMap or EditMap first: loadmap filename.map or editmap filename.map ------");
+-                break;
+-        }
+-        Communication communication = new Communication(d_Map,d_GameGamePhase);
+-        return  communication;
+-    }
+-}
+Index: my-app/.idea/workspace.xml
+===================================================================
+diff --git a/my-app/.idea/workspace.xml b/my-app/.idea/workspace.xml
+deleted file mode 100644
+--- a/my-app/.idea/workspace.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ /dev/null	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
+@@ -1,105 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="AutoImportSettings">
+-    <option name="autoReloadType" value="SELECTIVE" />
+-  </component>
+-  <component name="ChangeListManager">
+-    <list default="true" id="712d49f7-c230-48ea-96d1-91933bce1265" name="Changes" comment="" />
+-    <option name="SHOW_DIALOG" value="false" />
+-    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+-    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+-    <option name="LAST_RESOLUTION" value="IGNORE" />
+-  </component>
+-  <component name="FileTemplateManagerImpl">
+-    <option name="RECENT_TEMPLATES">
+-      <list>
+-        <option value="Interface" />
+-        <option value="Class" />
+-      </list>
+-    </option>
+-  </component>
+-  <component name="Git.Settings">
+-    <option name="RECENT_BRANCH_BY_REPOSITORY">
+-      <map>
+-        <entry key="$PROJECT_DIR$/.." value="master" />
+-      </map>
+-    </option>
+-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+-  </component>
+-  <component name="MarkdownSettingsMigration">
+-    <option name="stateVersion" value="1" />
+-  </component>
+-  <component name="MavenImportPreferences">
+-    <option name="generalSettings">
+-      <MavenGeneralSettings>
+-        <option name="useMavenConfig" value="true" />
+-      </MavenGeneralSettings>
+-    </option>
+-  </component>
+-  <component name="ProjectId" id="2dbmcXrUWyOGhSoPqmy3kueFGcD" />
+-  <component name="ProjectViewState">
+-    <option name="hideEmptyMiddlePackages" value="true" />
+-    <option name="showLibraryContents" value="true" />
+-  </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;/Users/harsimran/IdeaProjects/Team6-Soen6441-version2/my-app&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;
+-  }
+-}</component>
+-  <component name="RunManager">
+-    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+-      <option name="MAIN_CLASS_NAME" value="view.App" />
+-      <module name="my-app" />
+-      <extension name="coverage">
+-        <pattern>
+-          <option name="PATTERN" value="view.*" />
+-          <option name="ENABLED" value="true" />
+-        </pattern>
+-      </extension>
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <configuration default="true" type="JetRunConfigurationType">
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+-      <option name="filePath" />
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <recent_temporary>
+-      <list>
+-        <item itemvalue="Application.App" />
+-      </list>
+-    </recent_temporary>
+-  </component>
+-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+-  <component name="TaskManager">
+-    <task active="true" id="Default" summary="Default task">
+-      <changelist id="712d49f7-c230-48ea-96d1-91933bce1265" name="Changes" comment="" />
+-      <created>1710285231949</created>
+-      <option name="number" value="Default" />
+-      <option name="presentableId" value="Default" />
+-      <updated>1710285231949</updated>
+-    </task>
+-    <servers />
+-  </component>
+-  <component name="XDebuggerManager">
+-    <breakpoint-manager>
+-      <breakpoints>
+-        <line-breakpoint enabled="true" type="java-line">
+-          <url>file://$PROJECT_DIR$/src/main/java/controller/Game.java</url>
+-          <line>186</line>
+-          <option name="timeStamp" value="1" />
+-        </line-breakpoint>
+-      </breakpoints>
+-    </breakpoint-manager>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: my-app/.idea/libraries/Maven__org_jheaps_jheaps_0_10.xml
+===================================================================
+diff --git a/my-app/.idea/libraries/Maven__org_jheaps_jheaps_0_10.xml b/my-app/.idea/libraries/Maven__org_jheaps_jheaps_0_10.xml
+deleted file mode 100644
+--- a/my-app/.idea/libraries/Maven__org_jheaps_jheaps_0_10.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ /dev/null	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
+@@ -1,13 +0,0 @@
+-<component name="libraryTable">
+-  <library name="Maven: org.jheaps:jheaps:0.10">
+-    <CLASSES>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/jheaps/jheaps/0.10/jheaps-0.10.jar!/" />
+-    </CLASSES>
+-    <JAVADOC>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/jheaps/jheaps/0.10/jheaps-0.10-javadoc.jar!/" />
+-    </JAVADOC>
+-    <SOURCES>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/jheaps/jheaps/0.10/jheaps-0.10-sources.jar!/" />
+-    </SOURCES>
+-  </library>
+-</component>
+\ No newline at end of file
+Index: my-app/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml
+===================================================================
+diff --git a/my-app/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml b/my-app/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml
+deleted file mode 100644
+--- a/my-app/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ /dev/null	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
+@@ -1,13 +0,0 @@
+-<component name="libraryTable">
+-  <library name="Maven: org.hamcrest:hamcrest-core:1.3">
+-    <CLASSES>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar!/" />
+-    </CLASSES>
+-    <JAVADOC>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-javadoc.jar!/" />
+-    </JAVADOC>
+-    <SOURCES>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar!/" />
+-    </SOURCES>
+-  </library>
+-</component>
+\ No newline at end of file
+Index: my-app/.idea/libraries/Maven__org_jgrapht_jgrapht_core_1_3_1.xml
+===================================================================
+diff --git a/my-app/.idea/libraries/Maven__org_jgrapht_jgrapht_core_1_3_1.xml b/my-app/.idea/libraries/Maven__org_jgrapht_jgrapht_core_1_3_1.xml
+deleted file mode 100644
+--- a/my-app/.idea/libraries/Maven__org_jgrapht_jgrapht_core_1_3_1.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ /dev/null	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
+@@ -1,13 +0,0 @@
+-<component name="libraryTable">
+-  <library name="Maven: org.jgrapht:jgrapht-core:1.3.1">
+-    <CLASSES>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/jgrapht/jgrapht-core/1.3.1/jgrapht-core-1.3.1.jar!/" />
+-    </CLASSES>
+-    <JAVADOC>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/jgrapht/jgrapht-core/1.3.1/jgrapht-core-1.3.1-javadoc.jar!/" />
+-    </JAVADOC>
+-    <SOURCES>
+-      <root url="jar://$MAVEN_REPOSITORY$/org/jgrapht/jgrapht-core/1.3.1/jgrapht-core-1.3.1-sources.jar!/" />
+-    </SOURCES>
+-  </library>
+-</component>
+\ No newline at end of file
+Index: my-app/src/main/java/controller/GameHelper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package controller;\n\npublic class GameHelper {\n    /**\n     * it takes care whether the map is valid or not\n     * @param p_sample input string\n     * @return true if run fine otherwise false\n     */\n    public static boolean isValidMap(String p_sample) {\n        return p_sample != null && p_sample.matches(\"^[a-zA-Z.]*$\");\n    }\n\n    /**\n     * it takes care of the string matches\n     * @param p_sample input string\n     * @return true if run fine otherwise false\n     */\n    public static boolean isValidPlayer(String p_sample) {\n        return p_sample != null && p_sample.matches(\"[a-zA-Z0-9]+\");\n    }\n\n    /**\n     * it takes care of the string matches\n     * @param p_sample input string\n     * @return true if run fine otherwise false\n     */\n    public static boolean isAlphabetic(String p_sample) {\n        return p_sample != null && p_sample.matches(\"^[a-zA-Z-_]*$\");\n    }\n\n    /**\n     * it takes care of the string matches that for numeric id\n     * @param p_sample input string\n     * @return true if run fine otherwise false\n     */\n    public static boolean isNumeric(String p_sample) {\n        return p_sample != null && p_sample.matches(\"[0-9]+\");\n    }\n\n    /**\n     * it is basically set the game\n     * @param p_gameGamePhase Phase value is going to be set\n     */\n\n    /**\n     * it basically parsecommand that we are going to used in command line interface\n     * it helps to call the methods and play the game\n     * @param p_player player is going to play the move\n     * @param p_newCommand Command that is going to interpret\n     * @return next phase is start\n     */\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/src/main/java/controller/GameHelper.java b/my-app/src/main/java/controller/GameHelper.java
+--- a/my-app/src/main/java/controller/GameHelper.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/src/main/java/controller/GameHelper.java	(date 1710551194515)
+@@ -3,6 +3,7 @@
+ public class GameHelper {
+     /**
+      * it takes care whether the map is valid or not
++     *
+      * @param p_sample input string
+      * @return true if run fine otherwise false
+      */
+@@ -12,6 +13,7 @@
+ 
+     /**
+      * it takes care of the string matches
++     *
+      * @param p_sample input string
+      * @return true if run fine otherwise false
+      */
+@@ -21,6 +23,7 @@
+ 
+     /**
+      * it takes care of the string matches
++     *
+      * @param p_sample input string
+      * @return true if run fine otherwise false
+      */
+@@ -30,6 +33,7 @@
+ 
+     /**
+      * it takes care of the string matches that for numeric id
++     *
+      * @param p_sample input string
+      * @return true if run fine otherwise false
+      */
+@@ -37,16 +41,5 @@
+         return p_sample != null && p_sample.matches("[0-9]+");
+     }
+ 
+-    /**
+-     * it is basically set the game
+-     * @param p_gameGamePhase Phase value is going to be set
+-     */
+ 
+-    /**
+-     * it basically parsecommand that we are going to used in command line interface
+-     * it helps to call the methods and play the game
+-     * @param p_player player is going to play the move
+-     * @param p_newCommand Command that is going to interpret
+-     * @return next phase is start
+-     */
+-}
++}
+\ No newline at end of file
+Index: my-app/.idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"CompilerConfiguration\">\n    <annotationProcessing>\n      <profile name=\"Maven default annotation processors profile\" enabled=\"true\">\n        <sourceOutputDir name=\"target/generated-sources/annotations\" />\n        <sourceTestOutputDir name=\"target/generated-test-sources/test-annotations\" />\n        <outputRelativeToContentRoot value=\"true\" />\n        <module name=\"my-app\" />\n      </profile>\n    </annotationProcessing>\n    <bytecodeTargetLevel>\n      <module name=\"my-app\" target=\"1.8\" />\n    </bytecodeTargetLevel>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/.idea/compiler.xml b/my-app/.idea/compiler.xml
+--- a/my-app/.idea/compiler.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/.idea/compiler.xml	(date 1710551194517)
+@@ -9,8 +9,5 @@
+         <module name="my-app" />
+       </profile>
+     </annotationProcessing>
+-    <bytecodeTargetLevel>
+-      <module name="my-app" target="1.8" />
+-    </bytecodeTargetLevel>
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml b/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml
+new file mode 100644
+--- /dev/null	(date 1710551194537)
++++ b/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml	(date 1710551194537)
+@@ -0,0 +1,13 @@
++<component name="libraryTable">
++  <library name="Maven: org.apiguardian:apiguardian-api:1.1.2">
++    <CLASSES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar!/" />
++    </CLASSES>
++    <JAVADOC>
++      <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2-javadoc.jar!/" />
++    </JAVADOC>
++    <SOURCES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2-sources.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
+Index: .idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_8_2.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_8_2.xml b/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_8_2.xml
+new file mode 100644
+--- /dev/null	(date 1710551194541)
++++ b/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_8_2.xml	(date 1710551194541)
+@@ -0,0 +1,13 @@
++<component name="libraryTable">
++  <library name="Maven: org.junit.jupiter:junit-jupiter-api:5.8.2">
++    <CLASSES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.8.2/junit-jupiter-api-5.8.2.jar!/" />
++    </CLASSES>
++    <JAVADOC>
++      <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.8.2/junit-jupiter-api-5.8.2-javadoc.jar!/" />
++    </JAVADOC>
++    <SOURCES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.8.2/junit-jupiter-api-5.8.2-sources.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
+Index: my-app/src/main/java/model/Order.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\n\n/**\n * class handles the functionality of executing orders.\n */\npublic class Order {\n\t\n\t/**\n\t * @param d_TerritoryId is for territory name\n\t * @param d_Player player issuing deploy order\n\t */\n    private int d_NumArmies;\n    private String d_TerritoryId;\n    private Player d_Player;\n\n  \n    /**\n     * The order object will be initialized with deploy details by this constructor.\n     * @param p_player current player issuing deploy order\n     * @param p_territoryId territory where armies will be deployed\n     * @param p_numArmies total armies which will be deployed\n     */\n    public Order(Player p_player,String p_territoryId,int p_numArmies) {\n        d_Player = p_player;\n        d_TerritoryId = p_territoryId;\n        d_NumArmies = p_numArmies;\n    }\n\n    /**\n     * technique that implements the order\n     * @return true if successful, else false\n     */\n    public boolean execute(){\n        TerritoryDetails l_c= d_Player.getOwnedTerritories().get(d_TerritoryId.toLowerCase());\n        int l_existingArmies = l_c.d_NumberOfArmies;\n        l_existingArmies += d_NumArmies;\n        l_c.d_NumberOfArmies = l_existingArmies;\n        return true;\n    }\n\n    /**\n     * Getter for current player\n     * @return d_player\n     */\n    public Player getD_player() {\n        return d_Player;\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/src/main/java/model/Order.java b/my-app/src/main/java/model/Order.java
+--- a/my-app/src/main/java/model/Order.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/src/main/java/model/Order.java	(date 1710551194519)
+@@ -3,7 +3,7 @@
+ /**
+  * class handles the functionality of executing orders.
+  */
+-public class Order {
++public class Order implements order1 {
+ 	
+ 	/**
+ 	 * @param d_TerritoryId is for territory name
+Index: my-app/src/main/java/model/GameMap.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\n\nimport java.util.HashMap;\n\n/**\n * GameMap hold the details of map in the game.\n * Consist of HashMaps to access territories and continents of the map with their names.\n * \n *\n */\npublic class GameMap {\n\tpublic String d_MapName;\n\tpublic boolean d_Valid;\n\tpublic HashMap<String,Continent> d_Continents;\n\tpublic HashMap<String,TerritoryDetails> d_Countries;\n\t\n\t/**\n\t * Create GameMap object without naming the map.\n\t */\n\tpublic GameMap() {\n\t\tthis.d_MapName= \"\";\n\t\tthis.d_Continents= new HashMap<>();\n\t\tthis.d_Countries= new HashMap<>();\n\t\tthis.d_Valid= false;\n\t}\n\t\n\t/**\n\t * Create GameMap object with naming the map.\n\t * Initialize HashMaps for maintaining continents and territories.\n\t * @param p_mapName Name of the map\n\t */\n\tpublic GameMap(String p_mapName){\n\t\tthis.d_MapName= p_mapName;\n\t\tthis.d_Continents= new HashMap<>();\n\t\tthis.d_Countries= new HashMap<>();\n\t\tthis.d_Valid= false;\n\t}\n\n\t/**\n\t * Setter method to set the d_Continents HashMap to the given HashMap parameter.\n\t * @param p_continents HashMap for d_Continents\n\t */\n\tpublic void setContinents(HashMap<String, Continent> p_continents) {\n\t\tthis.d_Continents = p_continents;\n\t}\n\n\t/**\n\t * Getter method to return HashMap maintaining the list of territories in the map.\n\t * @return return HashMap maintaining the list of territories in the map\n\t */\n\tpublic HashMap<String, TerritoryDetails> getTerritories() {\n\t\treturn this.d_Countries;\n\t}\n\n\t/**\n\t * \n\t * Getter method for map name\n\t * \n\t * @return name of the map\n\t */\n\tpublic String getMapName(){\n\t\treturn this.d_MapName;\n\t}\n\n/**\n * \n * Getter method for continents\n * \n * @return list of continents\n */\n\tpublic HashMap<String, Continent> getContinents(){\n\t\treturn this.d_Continents;\n\t}\n\n\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/src/main/java/model/GameMap.java b/my-app/src/main/java/model/GameMap.java
+--- a/my-app/src/main/java/model/GameMap.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/src/main/java/model/GameMap.java	(date 1710551194521)
+@@ -44,6 +44,10 @@
+ 		this.d_Continents = p_continents;
+ 	}
+ 
++	public boolean getValid() {
++		return this.d_Valid;
++	}
++
+ 	/**
+ 	 * Getter method to return HashMap maintaining the list of territories in the map.
+ 	 * @return return HashMap maintaining the list of territories in the map
+Index: .idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_8_2.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_8_2.xml b/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_8_2.xml
+new file mode 100644
+--- /dev/null	(date 1710551194556)
++++ b/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_8_2.xml	(date 1710551194556)
+@@ -0,0 +1,13 @@
++<component name="libraryTable">
++  <library name="Maven: org.junit.platform:junit-platform-commons:1.8.2">
++    <CLASSES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.8.2/junit-platform-commons-1.8.2.jar!/" />
++    </CLASSES>
++    <JAVADOC>
++      <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.8.2/junit-platform-commons-1.8.2-javadoc.jar!/" />
++    </JAVADOC>
++    <SOURCES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.8.2/junit-platform-commons-1.8.2-sources.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
+Index: .idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml b/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml
+new file mode 100644
+--- /dev/null	(date 1710551194566)
++++ b/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml	(date 1710551194566)
+@@ -0,0 +1,13 @@
++<component name="libraryTable">
++  <library name="Maven: org.opentest4j:opentest4j:1.2.0">
++    <CLASSES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar!/" />
++    </CLASSES>
++    <JAVADOC>
++      <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0-javadoc.jar!/" />
++    </JAVADOC>
++    <SOURCES>
++      <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0-sources.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	(date 1710551194547)
++++ b/.idea/encodings.xml	(date 1710551194547)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="file://$PROJECT_DIR$/my-app/src/main/java" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/my-app/src/main/resources" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: my-app/src/main/java/model/EditGame.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\nimport java.util.*;\nimport view.App;\nimport controller.*;\nimport enumClass.GamePhase;\nimport model.ShowMap;\n\n\npublic abstract class EditGame extends GamePhases  {\n    App view;\n    ShowMap s;\n\n    public EditGame(Game p_g){\n        d_gameinstance=p_g;\n        d_Phase=\"Edit\";\n        view=new App();\n\n    }\n\n    public void reinforce() {\n\t\tprintInvalidCommandMessage();\n\t}\n    public boolean assignCountries(GameMap p_gamemap, ArrayList<Player> p_gameplayers){\n        printInvalidCommandMessage();\n        return false;\n\n    }\n    \n\n    public void gamePlayer(String[] p_commanddata, ArrayList<Player> p_gameplayers, String p_playerName){\n        printInvalidCommandMessage();\n\n    }\n    public void editContinent(String[] p_commanddata, String p_continentId, int p_controlValue){\n        try{\n            for(int i=1;i<p_commanddata.length;i++){\n                if(p_commanddata[i].equals(\"-add\")){\n                    if(p_commanddata[i+1].matches(\"^[a-zA-Z]+$\")){\n                        p_continentId=p_commanddata[i+1];\n                    }\n                    else{\n                        System.out.println(\"Not a valid continent ID\");\n                    }\n                    p_controlValue=Integer.parseInt(p_commanddata[i+2]);\n\n                    boolean l_continentadd=d_gameinstance.d_RunG.addContinent(d_gameinstance.d_Map, p_continentId, p_controlValue);\n                    if(l_continentadd){\n                        System.out.println(p_continentId+\"is added to the map\");\n                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                    }\n                    else{\n                        System.out.println(\"Continent already exists\");\n                    }\n\n                }\n                else if(p_commanddata[i].equals(\"-remove\")){\n                    if(p_commanddata[i+1].matches(\"^[a-zA-Z]+$\")){\n                        p_continentId=p_commanddata[i+1];\n                    }\n                    else{\n                        System.out.println(\"Not a valid continent ID\");\n                    }\n                    \n\n                    boolean l_continentremove=d_gameinstance.d_RunG.removeContinent(d_gameinstance.d_Map, p_continentId);\n                    if(l_continentremove){\n                        System.out.println(p_continentId+\"is removed to the map\");\n                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                    }\n                    else{\n                        System.out.println(\"Continent does not exists\");\n                    }\n                }\n\n\n            }\n        }\n        catch(Exception e){\n            System.out.println(\"Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID\");\n        }\n    }\n    public void editCountry(String[] p_commanddata, String p_continentId, String p_countryId){\n        try{\n            for(int i=1;i<p_commanddata.length;i++){\n                if(p_commanddata[i].equals(\"-add\")){\n                    if(p_commanddata[i+1].matches(\"^[a-zA-Z]+$\") || p_commanddata[i+2].matches(\"^[a-zA-Z]+$\")){\n                        p_continentId=p_commanddata[i+1];\n                        p_countryId=p_commanddata[i+2];\n                    }\n                    else{\n                        System.out.println(\"Not a valid Country Name\");\n                    }\n                    boolean l_countryadd=d_gameinstance.d_RunG.addTerritory(d_gameinstance.d_Map, p_countryId, p_continentId);\n                    if(l_countryadd){\n                        System.out.println(p_countryId+\"country is added to the map\"+p_continentId);\n                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                    }\n                    else{\n                        System.out.println(\"Country already exists\");\n                    }\n\n                }\n                else if(p_commanddata[i].equals(\"-remove\")){\n                    if(p_commanddata[i+1].matches(\"^[a-zA-Z]+$\")){\n                        p_countryId=p_commanddata[i+1];\n                    }\n                    else{\n                        System.out.println(\"Not a valid country ID\");\n                    }\n                    \n\n                    boolean l_countryremove=d_gameinstance.d_RunG.removeTerritory(d_gameinstance.d_Map, p_countryId);\n                    if(l_countryremove){\n                        System.out.println(p_countryId+\"is removed to the map\");\n                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                    }\n                    else{\n                        System.out.println(\"Country does not exist\");\n                    }\n                }\n\n\n            }\n        }\n        catch(Exception e){\n            System.out.println(\"Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID\");\n        }\n    }\n\n\n    public void editNeighbour(String[] p_commanddata, String p_countryId, String p_neighborId){\n        try{\n            for(int i=1;i<p_commanddata.length;i++){\n                if(p_commanddata[i].equals(\"-add\")){\n                    if(p_commanddata[i+1].matches(\"^[a-zA-Z]+$\") || p_commanddata[i+2].matches(\"^[a-zA-Z]+$\")){\n                        p_countryId=p_commanddata[i+1];\n                        p_neighborId=p_commanddata[i+2];\n                    }\n                    else{\n                        System.out.println(\"Not a valid Country Name\");\n                    }\n                    boolean l_neighboradd=d_gameinstance.d_RunG.addNeighbour(d_gameinstance.d_Map, p_countryId, p_neighborId);\n                    if(l_neighboradd){\n                        \n                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                    }\n                    else{\n                        System.out.println(\"Country does not exists: Please enter valid country Id, neighbor ID\");\n                    }\n\n                }\n                else if(p_commanddata[i].equals(\"-remove\")){\n                    if(p_commanddata[i+1].matches(\"^[a-zA-Z]+$\")){\n                        p_countryId=p_commanddata[i+1];\n                    }\n                    else{\n                        System.out.println(\"Not a valid country ID\");\n                    }\n                    \n\n                    boolean l_countryremove=d_gameinstance.d_RunG.removeTerritory(d_gameinstance.d_Map, p_countryId);\n                    if(l_countryremove){\n                        \n                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                    }\n                    else{\n                        System.out.println(\"Country does not exist\");\n                    }\n                }\n\n\n            }\n        }\n        catch(Exception e){\n            System.out.println(\"Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID\");\n        }\n    }\n    public void savemap(String[] p_commanddata,String p_mapName ){\n       try{\n        if(p_commanddata[1]!=\"\"){\n            if(d_gameinstance.isMapNameValid(p_commanddata[1])){\n                p_mapName=p_commanddata[1];\n                boolean l_mapchecker=d_gameinstance.d_RunG.saveMap(d_gameinstance.d_Map,p_mapName);\n                if(l_mapchecker){\n                    System.out.println(\"Map file saved successfully\");\n                    d_gameinstance.d_GameGamePhase=GamePhase.NULL;\n                    d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                }\n                else{\n                    System.out.println(\"Error is Saving: Invalid Map\");\n                }\n            }\n            else{\n                System.out.println(\"Map Name is not valid\");\n            }\n        }\n       }\n       catch(Exception e){\n        System.out.println(\"Use correct format: savemap filename\");\n       }\n    }\n\n    public void editMap(String[] p_commanddata,String p_mapName ){\n        try{\n         if(p_commanddata[1]!=null){\n             if(d_gameinstance.isMapNameValid(p_commanddata[1])){\n                 p_mapName=p_commanddata[1];\n                 d_gameinstance.d_Map=d_gameinstance.d_RunG.editMap(p_mapName);\n                 System.out.println(\"Editing Map: \"+p_mapName);\n                 d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;\n                 d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n             }\n             else{\n                System.out.println(\"Map is invalid\");\n             }\n                 \n         }\n        }\n        catch(Exception e){\n         System.out.println(\"Use correct format: editmap sample.map\");\n        }\n     }\n     public void loadMap(String[] p_commanddata,String p_mapName ){\n        try{\n         if(p_commanddata[1]!=null){\n             if(d_gameinstance.isMapNameValid(p_commanddata[1])){\n                 p_mapName=p_commanddata[1];\n                 d_gameinstance.d_Map=d_gameinstance.d_RunG.loadMap(p_mapName);\n                 if(d_gameinstance.d_Map!=null){\n                    if(!d_gameinstance.d_Map.d_Valid){\n                        System.out.println(\"Map is not valid\");\n                        d_gameinstance.d_GameGamePhase=GamePhase.NULL;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n                    }\n                    else{\n                        System.out.println(\"Valid Map\");\n                        d_gameinstance.d_GameGamePhase=GamePhase.STARTUP;\n                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n\n                    }\n                 \n             }\n             else{\n                d_gameinstance.d_GameGamePhase=GamePhase.NULL;\n                d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);\n             }\n            }\n             else{\n                System.out.println(\"Map is invalid\");\n             }\n                 \n         }\n        }\n        catch(Exception e){\n         System.out.println(\"Use correct format: loadmap sample.map\");\n        }\n     }\n     public void showMap(GameMap p_mapname){\n        s.showMap(p_mapname);\n     }\n     public void validateMap(){\n        if(d_gameinstance.d_RunG.validateMap(d_gameinstance.d_Map)){\n            System.out.println(\"Map is valid\");\n        }\n        else{\n            System.out.println(\"map is not valid\");\n        }\n     }\n\n     \n    \n\n}\n\n\t\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/src/main/java/model/EditGame.java b/my-app/src/main/java/model/EditGame.java
+--- a/my-app/src/main/java/model/EditGame.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/src/main/java/model/EditGame.java	(date 1710551194525)
+@@ -3,280 +3,302 @@
+ import view.App;
+ import controller.*;
+ import enumClass.GamePhase;
+-import model.ShowMap;
+-
+ 
+-public abstract class EditGame extends GamePhases  {
+-    App view;
+-    ShowMap s;
+ 
+-    public EditGame(Game p_g){
+-        d_gameinstance=p_g;
+-        d_Phase="Edit";
+-        view=new App();
+-
+-    }
+-
+-    public void reinforce() {
+-		printInvalidCommandMessage();
+-	}
+-    public boolean assignCountries(GameMap p_gamemap, ArrayList<Player> p_gameplayers){
++public abstract class EditGame extends GamePhases
++{
++    public void reinforce()
++    {
++        printInvalidCommandMessage();
++        d_gameinstance.d_LogEntry.setMessage("Invalid command in phase " + d_gameinstance.d_GamePhases.getD_PhaseName());
++    }
++
++    public void gamePlayer(String[] p_data, ArrayList<Player> p_players, String p_playerName)
++    {
+         printInvalidCommandMessage();
++        d_gameinstance.d_LogEntry.setMessage("Invalid command in phase " + d_gameinstance.d_GamePhases.getD_PhaseName());
++    }
++
++    public boolean assignCountries(GameMap p_map, ArrayList<Player> p_players) {
++        printInvalidCommandMessage();
++        d_gameinstance.d_LogEntry.setMessage("Invalid command in phase " + d_gameinstance.d_GamePhases.getD_PhaseName());
+         return false;
+-
+     }
+-    
+ 
+-    public void gamePlayer(String[] p_commanddata, ArrayList<Player> p_gameplayers, String p_playerName){
++    public void showMap(ArrayList<Player> p_players, GameMap p_map) {
+         printInvalidCommandMessage();
+-
++        d_gameinstance.d_LogEntry.setMessage("Invalid command in phase " + d_gameinstance.d_GamePhases.getD_PhaseName());
+     }
+-    public void editContinent(String[] p_commanddata, String p_continentId, int p_controlValue){
+-        try{
+-            for(int i=1;i<p_commanddata.length;i++){
+-                if(p_commanddata[i].equals("-add")){
+-                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
+-                        p_continentId=p_commanddata[i+1];
+-                    }
+-                    else{
+-                        System.out.println("Not a valid continent ID");
+-                    }
+-                    p_controlValue=Integer.parseInt(p_commanddata[i+2]);
+-
+-                    boolean l_continentadd=d_gameinstance.d_RunG.addContinent(d_gameinstance.d_Map, p_continentId, p_controlValue);
+-                    if(l_continentadd){
+-                        System.out.println(p_continentId+"is added to the map");
+-                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                    }
+-                    else{
+-                        System.out.println("Continent already exists");
+-                    }
+-
+-                }
+-                else if(p_commanddata[i].equals("-remove")){
+-                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
+-                        p_continentId=p_commanddata[i+1];
+-                    }
+-                    else{
+-                        System.out.println("Not a valid continent ID");
+-                    }
+-                    
+-
+-                    boolean l_continentremove=d_gameinstance.d_RunG.removeContinent(d_gameinstance.d_Map, p_continentId);
+-                    if(l_continentremove){
+-                        System.out.println(p_continentId+"is removed to the map");
+-                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                    }
+-                    else{
+-                        System.out.println("Continent does not exists");
+-                    }
+-                }
+-
+-
+-            }
+-        }
+-        catch(Exception e){
+-            System.out.println("Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID");
+-        }
+-    }
+-    public void editCountry(String[] p_commanddata, String p_continentId, String p_countryId){
+-        try{
+-            for(int i=1;i<p_commanddata.length;i++){
+-                if(p_commanddata[i].equals("-add")){
+-                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$") || p_commanddata[i+2].matches("^[a-zA-Z]+$")){
+-                        p_continentId=p_commanddata[i+1];
+-                        p_countryId=p_commanddata[i+2];
+-                    }
+-                    else{
+-                        System.out.println("Not a valid Country Name");
+-                    }
+-                    boolean l_countryadd=d_gameinstance.d_RunG.addTerritory(d_gameinstance.d_Map, p_countryId, p_continentId);
+-                    if(l_countryadd){
+-                        System.out.println(p_countryId+"country is added to the map"+p_continentId);
+-                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                    }
+-                    else{
+-                        System.out.println("Country already exists");
+-                    }
+-
+-                }
+-                else if(p_commanddata[i].equals("-remove")){
+-                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
+-                        p_countryId=p_commanddata[i+1];
+-                    }
+-                    else{
+-                        System.out.println("Not a valid country ID");
+-                    }
+-                    
+-
+-                    boolean l_countryremove=d_gameinstance.d_RunG.removeTerritory(d_gameinstance.d_Map, p_countryId);
+-                    if(l_countryremove){
+-                        System.out.println(p_countryId+"is removed to the map");
+-                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                    }
+-                    else{
+-                        System.out.println("Country does not exist");
+-                    }
+-                }
+-
+-
+-            }
+-        }
+-        catch(Exception e){
+-            System.out.println("Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID");
+-        }
+-    }
+-
+-
+-    public void editNeighbour(String[] p_commanddata, String p_countryId, String p_neighborId){
+-        try{
+-            for(int i=1;i<p_commanddata.length;i++){
+-                if(p_commanddata[i].equals("-add")){
+-                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$") || p_commanddata[i+2].matches("^[a-zA-Z]+$")){
+-                        p_countryId=p_commanddata[i+1];
+-                        p_neighborId=p_commanddata[i+2];
+-                    }
+-                    else{
+-                        System.out.println("Not a valid Country Name");
+-                    }
+-                    boolean l_neighboradd=d_gameinstance.d_RunG.addNeighbour(d_gameinstance.d_Map, p_countryId, p_neighborId);
+-                    if(l_neighboradd){
+-                        
+-                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                    }
+-                    else{
+-                        System.out.println("Country does not exists: Please enter valid country Id, neighbor ID");
+-                    }
+-
+-                }
+-                else if(p_commanddata[i].equals("-remove")){
+-                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
+-                        p_countryId=p_commanddata[i+1];
+-                    }
+-                    else{
+-                        System.out.println("Not a valid country ID");
+-                    }
+-                    
++}
++//    App view;
++//    ShowMap s;
++//
++//
++//
++//    public void reinforce() {
++//		printInvalidCommandMessage();
++//	}
++//    public boolean assignCountries(GameMap p_gamemap, ArrayList<Player> p_gameplayers){
++//        printInvalidCommandMessage();
++//        return false;
++//    }
++//
++//
++//    public void gamePlayer(String[] p_commanddata, ArrayList<Player> p_gameplayers, String p_playerName){
++//        printInvalidCommandMessage();
++//
++//    }
++//    public void editContinent(String[] p_commanddata, String p_continentId, int p_controlValue){
++//        try{
++//            for(int i=1;i<p_commanddata.length;i++){
++//                if(p_commanddata[i].equals("-add")){
++//                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
++//                        p_continentId=p_commanddata[i+1];
++//                    }
++//                    else{
++//                        System.out.println("Not a valid continent ID");
++//                    }
++//                    p_controlValue=Integer.parseInt(p_commanddata[i+2]);
++//
++//                    boolean l_continentadd=d_gameinstance.d_RunG.addContinent(d_gameinstance.d_Map, p_continentId, p_controlValue);
++//                    if(l_continentadd){
++//                        System.out.println(p_continentId+"is added to the map");
++//                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                    }
++//                    else{
++//                        System.out.println("Continent already exists");
++//                    }
++//
++//                }
++//                else if(p_commanddata[i].equals("-remove")){
++//                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
++//                        p_continentId=p_commanddata[i+1];
++//                    }
++//                    else{
++//                        System.out.println("Not a valid continent ID");
++//                    }
++//
++//
++//                    boolean l_continentremove=d_gameinstance.d_RunG.removeContinent(d_gameinstance.d_Map, p_continentId);
++//                    if(l_continentremove){
++//                        System.out.println(p_continentId+"is removed to the map");
++//                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                    }
++//                    else{
++//                        System.out.println("Continent does not exists");
++//                    }
++//                }
++//
++//
++//            }
++//        }
++//        catch(Exception e){
++//            System.out.println("Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID");
++//        }
++//    }
++//    public void editCountry(String[] p_commanddata, String p_continentId, String p_countryId){
++//        try{
++//            for(int i=1;i<p_commanddata.length;i++){
++//                if(p_commanddata[i].equals("-add")){
++//                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$") || p_commanddata[i+2].matches("^[a-zA-Z]+$")){
++//                        p_continentId=p_commanddata[i+1];
++//                        p_countryId=p_commanddata[i+2];
++//                    }
++//                    else{
++//                        System.out.println("Not a valid Country Name");
++//                    }
++//                    boolean l_countryadd=d_gameinstance.d_RunG.addTerritory(d_gameinstance.d_Map, p_countryId, p_continentId);
++//                    if(l_countryadd){
++//                        System.out.println(p_countryId+"country is added to the map"+p_continentId);
++//                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                    }
++//                    else{
++//                        System.out.println("Country already exists");
++//                    }
++//
++//                }
++//                else if(p_commanddata[i].equals("-remove")){
++//                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
++//                        p_countryId=p_commanddata[i+1];
++//                    }
++//                    else{
++//                        System.out.println("Not a valid country ID");
++//                    }
++//
++//
++//                    boolean l_countryremove=d_gameinstance.d_RunG.removeTerritory(d_gameinstance.d_Map, p_countryId);
++//                    if(l_countryremove){
++//                        System.out.println(p_countryId+"is removed to the map");
++//                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                    }
++//                    else{
++//                        System.out.println("Country does not exist");
++//                    }
++//                }
++//
++//
++//            }
++//        }
++//        catch(Exception e){
++//            System.out.println("Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID");
++//        }
++//    }
++//
++//
++//    public void editNeighbour(String[] p_commanddata, String p_countryId, String p_neighborId){
++//        try{
++//            for(int i=1;i<p_commanddata.length;i++){
++//                if(p_commanddata[i].equals("-add")){
++//                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$") || p_commanddata[i+2].matches("^[a-zA-Z]+$")){
++//                        p_countryId=p_commanddata[i+1];
++//                        p_neighborId=p_commanddata[i+2];
++//                    }
++//                    else{
++//                        System.out.println("Not a valid Country Name");
++//                    }
++//                    boolean l_neighboradd=d_gameinstance.d_RunG.addNeighbour(d_gameinstance.d_Map, p_countryId, p_neighborId);
++//                    if(l_neighboradd){
++//
++//                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                    }
++//                    else{
++//                        System.out.println("Country does not exists: Please enter valid country Id, neighbor ID");
++//                    }
++//
++//                }
++//                else if(p_commanddata[i].equals("-remove")){
++//                    if(p_commanddata[i+1].matches("^[a-zA-Z]+$")){
++//                        p_countryId=p_commanddata[i+1];
++//                    }
++//                    else{
++//                        System.out.println("Not a valid country ID");
++//                    }
++//
++//
++//                    boolean l_countryremove=d_gameinstance.d_RunG.removeTerritory(d_gameinstance.d_Map, p_countryId);
++//                    if(l_countryremove){
++//
++//                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                    }
++//                    else{
++//                        System.out.println("Country does not exist");
++//                    }
++//                }
++//
++//
++//            }
++//        }
++//        catch(Exception e){
++//            System.out.println("Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID");
++//        }
++//    }
++//    public void savemap(String[] p_commanddata,String p_mapName ){
++//       try{
++//        if(p_commanddata[1]!=""){
++//            if(d_gameinstance.isMapNameValid(p_commanddata[1])){
++//                p_mapName=p_commanddata[1];
++//                boolean l_mapchecker=d_gameinstance.d_RunG.saveMap(d_gameinstance.d_Map,p_mapName);
++//                if(l_mapchecker){
++//                    System.out.println("Map file saved successfully");
++//                    d_gameinstance.d_GameGamePhase=GamePhase.NULL;
++//                    d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                }
++//                else{
++//                    System.out.println("Error is Saving: Invalid Map");
++//                }
++//            }
++//            else{
++//                System.out.println("Map Name is not valid");
++//            }
++//        }
++//       }
++//       catch(Exception e){
++//        System.out.println("Use correct format: savemap filename");
++//       }
++//    }
++//
++//    public void editMap(String[] p_commanddata,String p_mapName ){
++//        try{
++//         if(p_commanddata[1]!=null){
++//             if(d_gameinstance.isMapNameValid(p_commanddata[1])){
++//                 p_mapName=p_commanddata[1];
++//                 d_gameinstance.d_Map=d_gameinstance.d_RunG.editMap(p_mapName);
++//                 System.out.println("Editing Map: "+p_mapName);
++//                 d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
++//                 d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//             }
++//             else{
++//                System.out.println("Map is invalid");
++//             }
++//
++//         }
++//        }
++//        catch(Exception e){
++//         System.out.println("Use correct format: editmap sample.map");
++//        }
++//     }
++//     public void loadMap(String[] p_commanddata,String p_mapName ){
++//        try{
++//         if(p_commanddata[1]!=null){
++//             if(d_gameinstance.isMapNameValid(p_commanddata[1])){
++//                 p_mapName=p_commanddata[1];
++//                 d_gameinstance.d_Map=d_gameinstance.d_RunG.loadMap(p_mapName);
++//                 if(d_gameinstance.d_Map!=null){
++//                    if(!d_gameinstance.d_Map.d_Valid){
++//                        System.out.println("Map is not valid");
++//                        d_gameinstance.d_GameGamePhase=GamePhase.NULL;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//                    }
++//                    else{
++//                        System.out.println("Valid Map");
++//                        d_gameinstance.d_GameGamePhase=GamePhase.STARTUP;
++//                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//
++//                    }
++//
++//             }
++//             else{
++//                d_gameinstance.d_GameGamePhase=GamePhase.NULL;
++//                d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
++//             }
++//            }
++//             else{
++//                System.out.println("Map is invalid");
++//             }
++//
++//         }
++//        }
++//        catch(Exception e){
++//         System.out.println("Use correct format: loadmap sample.map");
++//        }
++//     }
++//     public void showMap(GameMap p_mapname){
++//        s.showMap(p_mapname);
++//     }
++//
++//    public void showMapWithArmies(ArrayList<Player> p_players, GameMap p_map) {
++//        printInvalidCommandMessage();
++//        d_gameinstance.d_LogEntry.setMessage("Invalid command in phase "+d_gameinstance.d_GamePhases.getD_PhaseName());
++//    }
++//     public void validateMap(){
++//        if(d_gameinstance.d_RunG.validateMap(d_gameinstance.d_Map)){
++//            System.out.println("Map is valid");
++//        }
++//        else{
++//            System.out.println("map is not valid");
++//        }
++//     }
++
++     
++    
+ 
+-                    boolean l_countryremove=d_gameinstance.d_RunG.removeTerritory(d_gameinstance.d_Map, p_countryId);
+-                    if(l_countryremove){
+-                        
+-                        d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                    }
+-                    else{
+-                        System.out.println("Country does not exist");
+-                    }
+-                }
++
+ 
+-
+-            }
+-        }
+-        catch(Exception e){
+-            System.out.println("Invalid command -Try again:  editcontinent -add continentID controlvalue -remove continentID");
+-        }
+-    }
+-    public void savemap(String[] p_commanddata,String p_mapName ){
+-       try{
+-        if(p_commanddata[1]!=""){
+-            if(d_gameinstance.isMapNameValid(p_commanddata[1])){
+-                p_mapName=p_commanddata[1];
+-                boolean l_mapchecker=d_gameinstance.d_RunG.saveMap(d_gameinstance.d_Map,p_mapName);
+-                if(l_mapchecker){
+-                    System.out.println("Map file saved successfully");
+-                    d_gameinstance.d_GameGamePhase=GamePhase.NULL;
+-                    d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                }
+-                else{
+-                    System.out.println("Error is Saving: Invalid Map");
+-                }
+-            }
+-            else{
+-                System.out.println("Map Name is not valid");
+-            }
+-        }
+-       }
+-       catch(Exception e){
+-        System.out.println("Use correct format: savemap filename");
+-       }
+-    }
++	
+ 
+-    public void editMap(String[] p_commanddata,String p_mapName ){
+-        try{
+-         if(p_commanddata[1]!=null){
+-             if(d_gameinstance.isMapNameValid(p_commanddata[1])){
+-                 p_mapName=p_commanddata[1];
+-                 d_gameinstance.d_Map=d_gameinstance.d_RunG.editMap(p_mapName);
+-                 System.out.println("Editing Map: "+p_mapName);
+-                 d_gameinstance.d_GameGamePhase=GamePhase.EDITMAP;
+-                 d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-             }
+-             else{
+-                System.out.println("Map is invalid");
+-             }
+-                 
+-         }
+-        }
+-        catch(Exception e){
+-         System.out.println("Use correct format: editmap sample.map");
+-        }
+-     }
+-     public void loadMap(String[] p_commanddata,String p_mapName ){
+-        try{
+-         if(p_commanddata[1]!=null){
+-             if(d_gameinstance.isMapNameValid(p_commanddata[1])){
+-                 p_mapName=p_commanddata[1];
+-                 d_gameinstance.d_Map=d_gameinstance.d_RunG.loadMap(p_mapName);
+-                 if(d_gameinstance.d_Map!=null){
+-                    if(!d_gameinstance.d_Map.d_Valid){
+-                        System.out.println("Map is not valid");
+-                        d_gameinstance.d_GameGamePhase=GamePhase.NULL;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-                    }
+-                    else{
+-                        System.out.println("Valid Map");
+-                        d_gameinstance.d_GameGamePhase=GamePhase.STARTUP;
+-                        d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-
+-                    }
+-                 
+-             }
+-             else{
+-                d_gameinstance.d_GameGamePhase=GamePhase.NULL;
+-                d_gameinstance.setGamePhase(d_gameinstance.d_GameGamePhase);
+-             }
+-            }
+-             else{
+-                System.out.println("Map is invalid");
+-             }
+-                 
+-         }
+-        }
+-        catch(Exception e){
+-         System.out.println("Use correct format: loadmap sample.map");
+-        }
+-     }
+-     public void showMap(GameMap p_mapname){
+-        s.showMap(p_mapname);
+-     }
+-     public void validateMap(){
+-        if(d_gameinstance.d_RunG.validateMap(d_gameinstance.d_Map)){
+-            System.out.println("Map is valid");
+-        }
+-        else{
+-            System.out.println("map is not valid");
+-        }
+-     }
+-
+-     
+-    
+-
+-}
+-
+-	
+-
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ProjectRootManager\" version=\"2\" default=\"true\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/.idea/misc.xml	(date 1710551194529)
+@@ -1,4 +1,12 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" default="true" />
++  <component name="MavenProjectsManager">
++    <option name="originalFiles">
++      <list>
++        <option value="$PROJECT_DIR$/pom.xml" />
++        <option value="$PROJECT_DIR$/my-app/pom.xml" />
++      </list>
++    </option>
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_19" default="true" project-jdk-name="19" project-jdk-type="JavaSDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"15448994-5576-43bb-886b-0c85ee982303\" name=\"Changes\" comment=\"i dont know commit\" />\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"MavenImportPreferences\">\n    <option name=\"generalSettings\">\n      <MavenGeneralSettings>\n        <option name=\"useMavenConfig\" value=\"true\" />\n      </MavenGeneralSettings>\n    </option>\n  </component>\n  <component name=\"ProjectId\" id=\"2dblYEnWCItt3qiU8OXN8b8nYrH\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"last_opened_file_path\": \"/Users/harsimran/IdeaProjects/Team6-Soen6441-version2\",\n    \"project.structure.last.edited\": \"Modules\",\n    \"project.structure.proportion\": \"0.0\",\n    \"project.structure.side.proportion\": \"0.0\"\n  }\n}]]></component>\n  <component name=\"RunManager\" selected=\"Application.App\">\n    <configuration name=\"App\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"view.App\" />\n      <module name=\"my-app\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"view.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"LoadMap\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"model.LoadMap\" />\n      <module name=\"my-app\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"model.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Application.App\" />\n        <item itemvalue=\"Application.LoadMap\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"15448994-5576-43bb-886b-0c85ee982303\" name=\"Changes\" comment=\"\" />\n      <created>1710284703703</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1710284703703</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"i dont know commit\">\n      <created>1710373815472</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1710373815472</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"2\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"i dont know commit\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"i dont know commit\" />\n  </component>\n  <component name=\"XDebuggerManager\">\n    <breakpoint-manager>\n      <breakpoints>\n        <line-breakpoint enabled=\"true\" type=\"java-line\">\n          <url>file://$PROJECT_DIR$/my-app/src/main/java/model/LoadMap.java</url>\n          <line>14</line>\n          <option name=\"timeStamp\" value=\"2\" />\n        </line-breakpoint>\n      </breakpoints>\n    </breakpoint-manager>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/.idea/workspace.xml	(date 1710551194533)
+@@ -4,7 +4,45 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="15448994-5576-43bb-886b-0c85ee982303" name="Changes" comment="i dont know commit" />
++    <list default="true" id="15448994-5576-43bb-886b-0c85ee982303" name="Changes" comment="tested on my side, collaboration running fine">
++      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_11.xml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_8_2.xml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_8_2.xml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/.idea/compiler.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/libraries/Maven__junit_junit_4_11.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/libraries/Maven__org_jgrapht_jgrapht_core_1_3_1.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/libraries/Maven__org_jheaps_jheaps_0_10.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/modules.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/.idea/workspace.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/my-app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/my-app.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/controller/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/src/main/java/controller/Game.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/controller/GameHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/src/main/java/controller/GameHelper.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/controller/GamePhaseManagement.java" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/model/AllotArmies.java" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/src/main/java/model/AllotArmies.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/model/EditGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/src/main/java/model/EditGame.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/model/GameMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/src/main/java/model/GameMap.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/model/MainPlayPhase.java" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/src/main/java/model/MainPlayPhase.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/src/main/java/model/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/src/main/java/model/Order.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/controller/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/controller/Game.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/controller/GameHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/controller/GameHelper.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/controller/GamePhaseManagement.class" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/AllotArmies.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/AllotArmies.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/Continent.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/Continent.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/EditGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/EditGame.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/GameMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/GameMap.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/GameRunnerEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/GameRunnerEngine.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/MainPlayPhase.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/MainPlayPhase.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/Order.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/Order.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/model/ValidateMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/model/ValidateMap.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/my-app/target/classes/view/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/my-app/target/classes/view/App.class" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -28,20 +66,27 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "last_opened_file_path": "/Users/harsimran/IdeaProjects/Team6-Soen6441-version2",
+-    "project.structure.last.edited": "Modules",
+-    "project.structure.proportion": "0.0",
+-    "project.structure.side.proportion": "0.0"
+-  }
+-}]]></component>
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;last_opened_file_path&quot;: &quot;/Users/harsimran/IdeaProjects/Team6-Soen6441-v2-final&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
++  }
++}</component>
++  <component name="RecentsManager">
++    <key name="CopyFile.RECENT_KEYS">
++      <recent name="$PROJECT_DIR$" />
++      <recent name="$PROJECT_DIR$/my-app" />
++    </key>
++  </component>
+   <component name="RunManager" selected="Application.App">
+     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="view.App" />
+-      <module name="my-app" />
++      <module name="Team6-Soen6441-v2-final" />
+       <extension name="coverage">
+         <pattern>
+           <option name="PATTERN" value="view.*" />
+@@ -54,7 +99,7 @@
+     </configuration>
+     <configuration name="LoadMap" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="model.LoadMap" />
+-      <module name="my-app" />
++      <module name="Team6-Soen6441-v2-final" />
+       <extension name="coverage">
+         <pattern>
+           <option name="PATTERN" value="model.*" />
+@@ -88,7 +133,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1710373815472</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="tested on my side, collaboration running fine">
++      <created>1710549569290</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1710549569290</updated>
++    </task>
++    <option name="localTasksCounter" value="3" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -104,7 +156,8 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="i dont know commit" />
+-    <option name="LAST_COMMIT_MESSAGE" value="i dont know commit" />
++    <MESSAGE value="tested on my side, collaboration running fine" />
++    <option name="LAST_COMMIT_MESSAGE" value="tested on my side, collaboration running fine" />
+   </component>
+   <component name="XDebuggerManager">
+     <breakpoint-manager>
+Index: my-app/my-app.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule=\"true\" type=\"JAVA_MODULE\" version=\"4\">\n  <component name=\"NewModuleRootManager\" LANGUAGE_LEVEL=\"JDK_1_8\">\n    <output url=\"file://$MODULE_DIR$/target/classes\" />\n    <output-test url=\"file://$MODULE_DIR$/target/test-classes\" />\n    <content url=\"file://$MODULE_DIR$\">\n      <sourceFolder url=\"file://$MODULE_DIR$/src/main/java\" isTestSource=\"false\" />\n      <sourceFolder url=\"file://$MODULE_DIR$/src/main/resources\" type=\"java-resource\" />\n      <sourceFolder url=\"file://$MODULE_DIR$/src/test/java\" isTestSource=\"true\" />\n      <excludeFolder url=\"file://$MODULE_DIR$/target\" />\n    </content>\n    <orderEntry type=\"inheritedJdk\" />\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\n    <orderEntry type=\"library\" scope=\"TEST\" name=\"Maven: junit:junit:4.11\" level=\"project\" />\n    <orderEntry type=\"library\" scope=\"TEST\" name=\"Maven: org.hamcrest:hamcrest-core:1.3\" level=\"project\" />\n    <orderEntry type=\"library\" name=\"Maven: org.jgrapht:jgrapht-core:1.3.1\" level=\"project\" />\n    <orderEntry type=\"library\" name=\"Maven: org.jheaps:jheaps:0.10\" level=\"project\" />\n  </component>\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/my-app.iml b/my-app/my-app.iml
+--- a/my-app/my-app.iml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/my-app.iml	(date 1710551194550)
+@@ -15,5 +15,9 @@
+     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+     <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:1.3.1" level="project" />
+     <orderEntry type="library" name="Maven: org.jheaps:jheaps:0.10" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.8.2" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-commons:1.8.2" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.2" level="project" />
+   </component>
+ </module>
+\ No newline at end of file
+Index: my-app/src/main/java/model/MainPlayPhase.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\n\nimport controller.Game;\nimport view.App;\n\nimport java.util.ArrayList;\nimport java.util.Iterator;\nimport model.ShowMap;\n\n/**\n * Implementation of MainPlay phase of the game.\n */\npublic class MainPlayPhase extends PlayPhase {\n\n    /**\n     * mv Reference for MapView.\n     */\n    App a;\n    ShowMap s=new ShowMap();\n\n    /**\n     * Constructor to initialize values.\n     *\n     * @param gameEngine The reference of GameEngine class\n     */\n    public MainPlayPhase(Game p_g) {\n        this.d_gameinstance = p_g;\n        this.d_Phase = \"MainPlay\";\n        a=new App();\n    }\n\n    @Override\n    public void showMap(ArrayList<Player> players, GameMap map) {\n        s.showMapWithArmies(players, map);\n    }\n\n    @Override\n    public void reinforce() {\n        for (Player player : d_gameinstance.d_Players) {\n            AllotArmies.allotArmies(player);\n            \n        }\n    }\n\n    @Override\n    public void gamePlayer(String[] data, ArrayList<Player> players, String playerName) {\n        printInvalidCommandMessage();\n        \n    }\n\n    @Override\n    public boolean assignCountries(GameMap map, ArrayList<Player> players) {\n        printInvalidCommandMessage();\n        \n        return false;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/src/main/java/model/MainPlayPhase.java b/my-app/src/main/java/model/MainPlayPhase.java
+--- a/my-app/src/main/java/model/MainPlayPhase.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/src/main/java/model/MainPlayPhase.java	(date 1710551194560)
+@@ -5,53 +5,45 @@
+ 
+ import java.util.ArrayList;
+ import java.util.Iterator;
+-import model.ShowMap;
+ 
+-/**
+- * Implementation of MainPlay phase of the game.
+- */
++
+ public class MainPlayPhase extends PlayPhase {
+ 
+-    /**
+-     * mv Reference for MapView.
+-     */
+     App a;
+-    ShowMap s=new ShowMap();
++    ShowMap s;
+ 
+-    /**
+-     * Constructor to initialize values.
+-     *
+-     * @param gameEngine The reference of GameEngine class
+-     */
+     public MainPlayPhase(Game p_g) {
+-        this.d_gameinstance = p_g;
+-        this.d_Phase = "MainPlay";
+-        a=new App();
++        d_gameinstance = p_g;
++        d_PhaseName = "MainPlay";
++        s=new ShowMap();
+     }
+ 
+     @Override
+     public void showMap(ArrayList<Player> players, GameMap map) {
+-        s.showMapWithArmies(players, map);
++        ShowMap.showMap(players, map);
+     }
+ 
+     @Override
+     public void reinforce() {
+-        for (Player player : d_gameinstance.d_Players) {
+-            AllotArmies.allotArmies(player);
+-            
++        Iterator<Player> itr = d_gameinstance.d_Players.listIterator();
++        while(itr.hasNext()) {
++            Player p = itr.next();
++            AllotArmies.allotArmies(p);
++            d_gameinstance.d_LogEntry.setMessage("Assign reinforcement armies to player "+p.getPlayerName());
+         }
+     }
+ 
+     @Override
+     public void gamePlayer(String[] data, ArrayList<Player> players, String playerName) {
+         printInvalidCommandMessage();
+-        
++        d_gameinstance.d_LogEntry.setMessage("------ Invalid command in phase "+d_gameinstance.d_GamePhases.getD_PhaseName()+" -------");
++
+     }
+ 
+     @Override
+     public boolean assignCountries(GameMap map, ArrayList<Player> players) {
+         printInvalidCommandMessage();
+-        
++        d_gameinstance.d_LogEntry.setMessage("------ Invalid command in phase "+d_gameinstance.d_GamePhases.getD_PhaseName()+" -------");
+         return false;
+     }
+ }
+Index: my-app/.idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"MavenProjectsManager\">\n    <option name=\"originalFiles\">\n      <list>\n        <option value=\"$PROJECT_DIR$/pom.xml\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_19\" default=\"true\" project-jdk-name=\"19\" project-jdk-type=\"JavaSDK\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/.idea/misc.xml b/my-app/.idea/misc.xml
+--- a/my-app/.idea/misc.xml	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/.idea/misc.xml	(date 1710551194571)
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
+   <component name="MavenProjectsManager">
+     <option name="originalFiles">
+       <list>
+@@ -7,5 +8,5 @@
+       </list>
+     </option>
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_19" default="true" project-jdk-name="19" project-jdk-type="JavaSDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="17" project-jdk-type="JavaSDK" />
+ </project>
+\ No newline at end of file
+Index: my-app/src/main/java/controller/Game.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package controller;\n\nimport static java.lang.System.*;\n\nimport java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.Queue;\n\nimport enumClass.GamePhase;\nimport model.AllotArmies;\nimport model.GameMap;\nimport model.GameRunnerEngine;\nimport model.Order;\nimport model.Player;\nimport model.ShowMap;\nimport model.StartUpPhase;\nimport view.App;\n\n/**\n * \n * Game class where the commands are parsed.\n */\n\n\npublic class Game {\n\n    public GameMap d_Map;\n    public GameRunnerEngine d_RunG;\n    public StartUpPhase d_StartUpPhase;\n    public AllotArmies d_Arfc;\n    public GamePhase d_GameGamePhase;\n    public ArrayList<Player> d_Players;\n    public App d_Play;\n\n    /**\n     * \n     * Game constructor\n     */\n\n    public Game() {\n        d_Map = new GameMap();\n        d_RunG = new GameRunnerEngine();\n        d_StartUpPhase = new StartUpPhase();\n        d_Arfc = new AllotArmies();\n        d_Players = new ArrayList<Player>();\n        d_GameGamePhase = GamePhase.NULL;\n        d_Play = new App();\n    }\n\n    /**\n     * \n     * Setter function\n     * @param p_gameGamePhase Phase of the game\n     */\n    public void setGamePhase(GamePhase p_gameGamePhase) {\n        this.d_GameGamePhase = p_gameGamePhase;\n    }\n\n    public boolean isMapNameValid(String p_val) {\n        return p_val != null && p_val.matches(\"^[a-zA-Z.]*$\");\n    }\n\n/**\n * \n * Commands are parsed to their respective functions\n * \n * @param p_player Player object\n * @param p_newCommand command\n * @return the phase of the game\n */\n\n    public GamePhase parseCommand(Player p_player, String p_newCommand) {\n        int l_controlValue = 0;\n        int l_numberOfArmies = 0;\n        String l_mapName = null;\n        String l_continentId = null;\n        String l_territoryId = null;\n        String l_neighbourTerritoryId = null;\n        String l_playerName = null;\n        String[] l_data = p_newCommand.split(\"\\\\s+\");\n        String l_commandName = l_data[0];\n\n        if (d_GameGamePhase.equals(GamePhase.NULL)) {\n            Communication communication = GamePhaseManagement.gamePhaseNULL(l_commandName,l_data,l_data,l_mapName,d_Map,d_RunG,d_GameGamePhase);\n            d_Map = communication.d_gameMap;\n            d_GameGamePhase= communication.d_gamePhase;\n        }\n        else if (d_GameGamePhase.equals(GamePhase.EDITMAP)) {\n            switch (l_commandName) {\n                case \"editcontinent\":\n                    try {\n                        for (int i = 1; i < l_data.length; i++) {\n                            if (l_data[i].equals(\"-add\")) {\n                                if (GameHelper.isAlphabetic(l_data[i + 1])) {\n                                    l_continentId = l_data[i + 1];\n                                }\n                                else {\n                                    System.out.println(\"----- Continent ID is not valid !!! --------\");\n                                }\n                                l_controlValue = Integer.parseInt(l_data[i + 2]);\n\n                                boolean l_check = d_RunG.addContinent(d_Map, l_continentId , l_controlValue);\n                                if (l_check) {\n                                    System.out.println( \"-------- Continent \" + l_continentId + \" added to the map !!! --------\");\n                                    d_GameGamePhase = GamePhase.EDITMAP;\n                                } else {\n                                    System.out.println(\"-------- Continent ID already exists. Please enter a valid continent ID !!! --------\\n\");\n                                }\n                            } else if (l_data[i].equals(\"-remove\")) {\n                                if (GameHelper.isAlphabetic(l_data[i + 1])) {\n                                    l_continentId = l_data[i + 1];\n                                }\n                                else\n                                    System.out.println(\"----- Continent ID is not valid !!! --------\");\n\n                                boolean l_check = d_RunG.removeContinent(d_Map, l_continentId);\n                                if (l_check) {\n                                    System.out.println(\"-------- Continent removed from the Map !!! --------\");\n                                    d_GameGamePhase = GamePhase.EDITMAP;\n                                } else\n                                    System.out.println(\"-------- Continent ID does not exists. Please enter a valid continent ID !!! --------\\n\");\n                            }\n                        }\n                    }\n                    catch(ArrayIndexOutOfBoundsException | NumberFormatException e) {\n                        System.out.println(\"---- Invalid command format. Should be: \\\"editcontinent -add continentID controlvalue , -remove continentID. \\\"----\\n\");\n                    } catch(Exception e) {\n                        System.out.println(\"---- Invalid command format. Should be: \\\"editcontinent -add continentID controlvalue , -remove continentID. \\\"----\\n\");\n                    }\n                    break;\n\n                case \"editcountry\":\n                    try {\n                        for (int i = 1; i < l_data.length; i++) {\n                            if (l_data[i].equals(\"-add\")) {\n                                if (GameHelper.isAlphabetic(l_data[i + 1]) || GameHelper.isAlphabetic(l_data[i + 2])) {\n                                    l_territoryId = l_data[i + 1];\n                                    l_continentId = l_data[i + 2];\n                                } else {\n                                    System.out.println(\"----- Territory ID is not valid !!! --------\");\n                                }\n                                boolean l_check = d_RunG.addTerritory(d_Map, l_territoryId, l_continentId);\n                                if (l_check) {\n                                    System.out.println(\"-------- Territory \" + l_territoryId + \" added to the map !!! --------\");\n                                    d_GameGamePhase = GamePhase.EDITMAP;\n                                } else {\n                                    System.out.println(\"-------- Territory ID already exists. Please enter a valid Territory !!! --------\\n\");\n                                }\n                            } else if (l_data[i].equals(\"-remove\")) {\n                                if (GameHelper.isAlphabetic(l_data[i + 1])) {\n                                    l_territoryId = l_data[i + 1];\n                                }\n                                else {\n                                    System.out.println(\"----- Territory ID is not valid !!! --------\");\n                                }\n                                boolean l_check = d_RunG.removeTerritory(d_Map, l_territoryId);\n                                if (l_check) {\n                                    System.out.println(\"-------- Territory removed from the Map !!! --------\");\n                                    d_GameGamePhase = GamePhase.EDITMAP;\n                                } else {\n                                    System.out.println(\"-------- Territory ID does not exists. Please enter a valid continent ID !!! --------\\n\");\n                                }\n                            }\n                        }\n                    }\n                    catch(ArrayIndexOutOfBoundsException e) {\n                        System.out.println(\"---- Invalid command format. Should be: \\\"editcountry -add countryId continentId , -remove countryId \\\"----\\n\");\n                    }\n                    catch(Exception e) {\n                        System.out.println(\"---- Invalid command format. Should be: \\\"editcountry -add countryId continentId , -remove countryId \\\"----\\n\");\n                    }\n                    break;\n\n                case \"editneighbor\":\n                    try {\n                        for (int i = 1; i < l_data.length; i++) {\n                            if (l_data[i].equals(\"-add\")) {\n                                if (GameHelper.isAlphabetic(l_data[i + 1]) || GameHelper.isAlphabetic(l_data[i + 2])) {\n                                    l_territoryId = l_data[i + 1];\n                                    l_neighbourTerritoryId = l_data[i + 2];\n                                } else {\n                                    System.out.println(\"----- Territory ID is not valid !!!  -----\");\n                                }\n\n                                boolean l_check = d_RunG.addNeighbour(d_Map, l_territoryId, l_neighbourTerritoryId);\n                                if (l_check) {\n                                    d_GameGamePhase = GamePhase.EDITMAP;\n                                } else {\n                                    System.out.println(\"----- Territory doesn't exist - Enter valid territoryID and neighbourTerritoryID -----\");\n                                }\n                            } else if (l_data[i].equals(\"-remove\")) {\n                                if (GameHelper.isAlphabetic(l_data[i + 1]) || GameHelper.isAlphabetic(l_data[i + 2])) {\n                                    l_territoryId = l_data[i + 1];\n                                    l_neighbourTerritoryId = l_data[i + 2];\n                                } else {\n                                    System.out.println(\"----- Territory ID is not valid !!!  -----\");\n                                }\n\n                                boolean l_check = d_RunG.removeNeighbour(d_Map, l_territoryId, l_neighbourTerritoryId);\n                                if (l_check) {\n                                    d_GameGamePhase = GamePhase.EDITMAP;\n                                } else\n                                    System.out.println(\"----- Territory doesn't exist - Enter valid territoryID and neighbourTerritoryID -----\\n\");\n                            }\n                        }\n                    }\n                    catch(ArrayIndexOutOfBoundsException e) {\n                        System.out.println(\"----- Invalid command format. Should be: editneighbor -add countryID neighborcountryID, -remove countryID neighborcountryID ----\");\n                    }\n                    catch(Exception e) {\n                        System.out.println(\"----- Invalid command format. Should be: editneighbor -add countryID neighborcountryID, -remove countryID neighborcountryID ----\");\n                    }\n                    break;\n                case \"savemap\":\n                    try {\n                        if (l_data[1] != \"\") {\n                            if (GameHelper.isValidMap(l_data[1])) {\n                                l_mapName = l_data[1];\n                                boolean l_check = d_RunG.saveMap(d_Map, l_mapName);\n                                if (l_check) {\n                                    System.out.println(\"----- Map file is saved successfully !!!! -----\");\n                                    d_GameGamePhase = GamePhase.EDITMAP;\n                                } else\n                                    System.out.println(\"---- Invalid Map !!! * Cannot be saved * -----\");\n                            } else\n                                System.out.println(\"----- Map name is not valid !!!! -----\");\n                        }\n                    }\n                    catch(ArrayIndexOutOfBoundsException e) {\n                        System.out.println(\"----- Invalid command format. Should be: savemap filename ----\");\n                    }\n                    catch(Exception e) {\n                        System.out.println(\"----- Invalid command format. Should be: savemap filename -----\");\n                    }\n                    break;\n\n                case \"showmap\":\n                    System.out.println(\"----- Displaying the Map Below ------ \\n\");\n                    ShowMap.showMap(d_Map);\n                    d_GameGamePhase = GamePhase.EDITMAP;\n                    break;\n\n                case \"editmap\":\n                    try {\n                        if (l_data[1] != null) {\n                            if (GameHelper.isValidMap(l_data[1])) {\n                                l_mapName = l_data[1];\n                                d_Map = d_RunG.editMap(l_mapName);\n                                System.out.println(\"----- Initiate the editing process   \" + l_mapName+\" -----\");\n                                d_GameGamePhase = GamePhase.EDITMAP;\n                            } else\n                                System.out.println(\"----- Map is not valid !!!! -----\");\n                        }\n                    }\n                    catch(ArrayIndexOutOfBoundsException e) {\n                        System.out.println(\"----- Invalid command format. Should be: editmap sample.map ----\");\n                    }\n                    catch(Exception e) {\n                        System.out.println(\"----- Invalid command format. Should be: editmap sample.map ----\");\n                    }\n                    break;\n\n                case \"loadmap\":\n                    try {\n                        if (l_data[1] != \"\") {\n                            if (GameHelper.isValidMap(l_data[1])) {\n                                l_mapName = l_data[1];\n                                d_Map = d_RunG.loadMap(l_mapName);\n                                if (d_Map != null) {\n                                    if (!d_Map.d_Valid) {\n                                        System.out.println(\"----- Map is not valid !!!! -----\");\n                                        d_GameGamePhase = GamePhase.NULL;\n                                    } else {\n                                        System.out.println(\"----- Map Validated !!!! -----\");\n                                        System.out.println(\"----  You can start adding players :- !!!! ----\");\n                                        d_GameGamePhase = GamePhase.STARTUP;\n                                    }\n                                } else {\n                                    d_GameGamePhase = GamePhase.NULL;\n                                }\n                            } else\n                                System.out.println(\"----- Map is not valid !!!! -----\");\n                        }\n                    }\n                    catch(ArrayIndexOutOfBoundsException e) {\n                        System.out.println(\"----- Invalid command format. Should be: loadmap sample.map ----\");\n                    }\n                    catch(Exception e) {\n                        System.out.println(\"----- Invalid command format. Should be: loadmap sample.map ----\");\n                    }\n                    break;\n\n                case \"validatemap\":\n                    if(d_RunG.validateMap(d_Map)) {\n                            System.out.println(\"----- Map Validated !!!! -----\");\n                    }\n                    else {\n                        System.out.println(\"----- Map is not valid !!!! -----\");\n                    }\n                    break;\n\n                default:\n                    System.out.println(\"----- Invalid command format. \\n Either use | edit commands :(editcontinent/editterritory/editneighbour)| or savemap| validatemap | editmap | loadmap | showmap command.\");\n                    break;\n            }\n        }\n        else if (d_GameGamePhase.equals(GamePhase.STARTUP)) {\n            switch (l_commandName) {\n                case \"gameplayer\":\n                    try {\n                        for (int i = 1; i < l_data.length; i++) {\n                            if (l_data[i].equals(\"-add\")) {\n                                if (GameHelper.isValidPlayer(l_data[i + 1])) {\n                                    l_playerName = l_data[i + 1];\n                                    boolean l_check = d_StartUpPhase.addPlayer(d_Players, l_playerName);\n                                    if (l_check) {\n                                        System.out.println(\"------- Player is added !!!! ---- \");\n                                        System.out.println(\"------- Maximum 5 can be added !!! ---- \");\n                                    } else {\n                                        System.out.println(\"------- The 5-player maximum has been met, and no further players can be accommodated !!!! ---- \");\n                                    }\n                                    d_GameGamePhase = GamePhase.STARTUP;\n                                } else {\n                                    System.out.println(\"-------Player Name is not valid !!!! ---- \");\n                                }\n                            } else if (l_data[i].equals(\"-remove\")) {\n                                if (GameHelper.isValidPlayer(l_data[i + 1])) {\n                                    l_playerName = l_data[i + 1];\n                                    boolean l_check = d_StartUpPhase.removePlayer(d_Players, l_playerName);\n                                    if (l_check)\n                                        System.out.println(\"------- Player is removed !!!! ---- \");\n                                    else\n                                        System.out.println(\"------- Player doesn't exist !!! ----\");\n                                    d_GameGamePhase = GamePhase.STARTUP;\n                                } else\n                                    System.out.println(\"-------Player Name is not valid !!!! ---- \");\n                            }\n                        }\n                    }\n                    catch(ArrayIndexOutOfBoundsException e) {\n                        System.out.println(\"----- Invalid command format. Should be:  gameplayer -add playername,  -remove playername ----- \");\n                    }\n                    catch(Exception e) {\n                        System.out.println(\"----- Invalid command format. Should be:  gameplayer -add playername,  -remove playername ----- \");\n                    }\n                    break;\n\n                case \"assigncountries\":\n                    boolean l_check = d_StartUpPhase.assignTerritories(d_Map, d_Players);\n                    if (l_check) {\n                        System.out.println(\"----- Territories have been randomly allocated to the players  ----- \");\n                        d_GameGamePhase = GamePhase.ISSUE_ORDERS;\n                    }\n                    d_GameGamePhase = GamePhase.ISSUE_ORDERS;\n                    break;\n\n                case \"showmap\":\n                    ShowMap.showMapWithArmies(d_Players, d_Map);\n                    break;\n\n                default:\n                    System.out.println(\"----- Invalid command format. Should be:| gameplayer command | assignterritories command | showmap command | in the STARTUP Phase -----\");\n                    break;\n            }\n        }\n\n        else if (d_GameGamePhase.equals(GamePhase.ISSUE_ORDERS)) {\n            int l_counter = 0;\n            Iterator<Player> l_iterator = d_Players.listIterator();\n            while(l_iterator.hasNext()) {\n                Player l_p = l_iterator.next();\n                System.out.println(\"----- Player \"+l_p.getPlayerName()+\" has \"+l_p.getOwnedArmies()+\" Armies !!!!! -----\");\n                if (l_p.getOwnedArmies() > 0) {\n                    l_counter = l_counter + l_p.getOwnedArmies();\n                }\n            }\n            System.out.println(\"----- Combined armies remaining across all players in the pool \"+l_counter+\" -----\");\n            if(l_counter > 0){\n                switch (l_commandName) {\n                    case \"deploy\":\n                        try {\n                            if (!(l_data[1] == null) || !(l_data[2] == null)) {\n                                if (GameHelper.isNumeric(l_data[1]) || GameHelper.isNumeric(l_data[2])) {\n                                    l_territoryId = l_data[1];\n\n                                    l_numberOfArmies = Integer.parseInt(l_data[2]);\n\n                                    boolean l_checkOwnedTerritory = p_player.getOwnedTerritories().containsKey(l_territoryId.toLowerCase());\n                                    boolean l_checkArmies = (p_player.getOwnedArmies() >= l_numberOfArmies);\n                                    System.out.println(\"----- Player \"+p_player.getPlayerName()+\"  Can provide deploy order or pass order ----\");\n                                    if(l_checkOwnedTerritory && l_checkArmies){\n                                        Order l_temp = new Order(p_player, l_territoryId, l_numberOfArmies);\n                                        p_player.addOrder(l_temp);\n                                        p_player.issue_order();\n                                        p_player.setOwnedArmies(p_player.getOwnedArmies()-l_numberOfArmies);\n                                        System.out.println(\"----- Player\" + p_player.getPlayerName() + \"currently retains\" +p_player.getOwnedArmies()+ \"army units ----\");\n                                    }\n                                    else{\n                                        System.out.println(\"--- Pass to next player if no territory owned or insufficient army units ---- \\n\");\n                                    }\n                                    d_GameGamePhase = GamePhase.TURN;\n                                    break;\n                                }\n                            } else\n                                System.out.println(\"------ Command not valid ----- \");\n\n                        }catch (Exception e) {\n                            System.out.println(\"--- Pass to next player if no territory owned or insufficient army units ---- \\n\");\n                        }\n                        break;\n\n                case \"pass\":\n                    try {\n                        d_GameGamePhase = GamePhase.TURN;\n                    }catch (Exception e) {\n                        System.out.println(\"----- Invalid command format. Should be: | deploy territoryID num | pass | ----- \");\n                    }\n                    break;\n\n                case \"showmap\":\n                    ShowMap.showMapWithArmies(d_Players, d_Map);\n                    break;\n\n                default:\n                    System.out.println(\"----- Invalid command format. Should be:| deploy | pass | showmap | commands in ISSUE_ORDERS Phase -----\");\n                    break;\n            }\n        }\n            else{\n                System.out.println(\" -----  Press ENTER to  continue  OR  execute  Phase. ----- \");\n                d_GameGamePhase = GamePhase.EXECUTE_ORDERS;\n                return d_GameGamePhase;\n            }\n        }\n        else if (d_GameGamePhase.equals(GamePhase.EXECUTE_ORDERS)) {\n            switch (l_commandName) {\n                case \"execute\":\n                    int l_count = 0;\n                    for (Player l_p : d_Players) {\n                        Queue<Order> l_temp = l_p.getD_orderList();\n                            l_count = l_count +l_temp.size();\n                        }\n\n                    if(l_count == 0){\n                        System.out.println(\" -----  Orders already executed !!!  ----- \");\n                        ShowMap.showMapWithArmies(d_Players, d_Map);\n                        d_GameGamePhase = GamePhase.ISSUE_ORDERS;\n                        return d_GameGamePhase;\n                    }\n                    else{\n                        System.out.println(\" -----  Total Orders  :\" + l_count + \" -----\");\n                        while (l_count != 0) {\n                            for (Player l_p : d_Players) {\n\n                                Queue<Order> l_temp = l_p.getD_orderList();\n                                if (l_temp.size() > 0) {\n                                    Order l_toRemove = l_p.next_order();\n                                    System.out.println(\"----- Order: \" +l_toRemove+ \" executed for player: \"+l_p.getPlayerName()+ \" -----\");\n                                    l_toRemove.execute();\n                                }\n                            }\n                            l_count--;\n                        }\n\n                        System.out.println(\"-----  Orders executed!!! -----\");\n                        ShowMap.showMapWithArmies(d_Players, d_Map);\n                        d_GameGamePhase = GamePhase.ISSUE_ORDERS;\n                    }\n                    break;\n\n                case \"showmap\":\n                    ShowMap.showMapWithArmies(d_Players, d_Map);\n                    break;\n\n                case \"exit\":\n                    System.out.println(\" ----- [ END OF BUILD 1 ] ------- \");\n                    exit(0);\n\n                default:\n                    System.out.println(\"----- The Order Phase has begun, proceed with either displaying the map (showmap) or executing orders (execute) ---- \");\n                    break;\n            }\n        }\n            return d_GameGamePhase;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/my-app/src/main/java/controller/Game.java b/my-app/src/main/java/controller/Game.java
+--- a/my-app/src/main/java/controller/Game.java	(revision e9eee7d0acaa03282f08c96775d12da14fba9618)
++++ b/my-app/src/main/java/controller/Game.java	(date 1710551194580)
+@@ -1,5 +1,6 @@
+ package controller;
+ 
++
+ import static java.lang.System.*;
+ 
+ import java.util.ArrayList;
+@@ -15,6 +16,14 @@
+ import model.ShowMap;
+ import model.StartUpPhase;
+ import view.App;
++import model.LogBuffer;
++import view.WriteLogEntry;
++import model.GamePhases;
++import  model.order1;
++import model.TerritoryDetails;
++import model.Advance;
++import model.*;
++
+ 
+ /**
+  * 
+@@ -24,6 +33,7 @@
+ 
+ public class Game {
+ 
++
+     public GameMap d_Map;
+     public GameRunnerEngine d_RunG;
+     public StartUpPhase d_StartUpPhase;
+@@ -32,6 +42,13 @@
+     public ArrayList<Player> d_Players;
+     public App d_Play;
+ 
++    public LogBuffer d_LogEntry;
++    public GamePhases d_GamePhases;
++
++    public WriteLogEntry d_WriteLog;
++
++
++
+     /**
+      * 
+      * Game constructor
+@@ -40,15 +57,24 @@
+     public Game() {
+         d_Map = new GameMap();
+         d_RunG = new GameRunnerEngine();
+-        d_StartUpPhase = new StartUpPhase();
++        //d_StartUpPhase = new StartUpPhase();
+         d_Arfc = new AllotArmies();
+         d_Players = new ArrayList<Player>();
+         d_GameGamePhase = GamePhase.NULL;
+         d_Play = new App();
++        d_LogEntry = new LogBuffer();
++        d_WriteLog = new WriteLogEntry();
++        d_LogEntry.attach(d_WriteLog);
++
+     }
+ 
++
++    public void setPhase(GamePhases p_GamePhases)
++    {
++        d_GamePhases = p_GamePhases;
++    }
+     /**
+-     * 
++     *
+      * Setter function
+      * @param p_gameGamePhase Phase of the game
+      */
+@@ -76,286 +102,144 @@
+         String l_continentId = null;
+         String l_territoryId = null;
+         String l_neighbourTerritoryId = null;
++        String l_countryNameFrom = null;
++        String l_countryNameTo= null;
+         String l_playerName = null;
++        String l_countryId=null;
++        String l_sourceCountryId= null;
++        String l_targetCountryId= null;
+         String[] l_data = p_newCommand.split("\\s+");
+         String l_commandName = l_data[0];
+ 
+         if (d_GameGamePhase.equals(GamePhase.NULL)) {
+-            Communication communication = GamePhaseManagement.gamePhaseNULL(l_commandName,l_data,l_data,l_mapName,d_Map,d_RunG,d_GameGamePhase);
+-            d_Map = communication.d_gameMap;
+-            d_GameGamePhase= communication.d_gamePhase;
++            d_LogEntry.setMessage("------- Initial Phase --------");
++            setPhase(new Load(this));
++            switch (l_commandName) {
++                case "editmap":
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.editMap(l_data, l_mapName);
++                    String str= d_GamePhases.getD_PhaseName();
++                    System.out.println(str);
++                    break;
++
++                case "loadmap":
++
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.loadMap(l_data,l_mapName);
++                    String str1= d_GamePhases.getD_PhaseName();
++                    System.out.println(str1);
++                    break;
++                default:
++                    System.out.println("----- Try LoadMap or EditMap first: loadmap filename.map or editmap filename.map ------");
++                    d_LogEntry.setMessage("----- Try LoadMap or EditMap first: loadmap filename.map or editmap filename.map ------");
++                    break;
++            }
+         }
+         else if (d_GameGamePhase.equals(GamePhase.EDITMAP)) {
++
++            d_LogEntry.setMessage("------- EditMap Phase --------");
+             switch (l_commandName) {
+                 case "editcontinent":
+-                    try {
+-                        for (int i = 1; i < l_data.length; i++) {
+-                            if (l_data[i].equals("-add")) {
+-                                if (GameHelper.isAlphabetic(l_data[i + 1])) {
+-                                    l_continentId = l_data[i + 1];
+-                                }
+-                                else {
+-                                    System.out.println("----- Continent ID is not valid !!! --------");
+-                                }
+-                                l_controlValue = Integer.parseInt(l_data[i + 2]);
++                    setPhase(new Load(this));
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.editContinent(l_data, l_continentId, l_controlValue);
++                    String str= d_GamePhases.getD_PhaseName();
++                    System.out.println(str);
+ 
+-                                boolean l_check = d_RunG.addContinent(d_Map, l_continentId , l_controlValue);
+-                                if (l_check) {
+-                                    System.out.println( "-------- Continent " + l_continentId + " added to the map !!! --------");
+-                                    d_GameGamePhase = GamePhase.EDITMAP;
+-                                } else {
+-                                    System.out.println("-------- Continent ID already exists. Please enter a valid continent ID !!! --------\n");
+-                                }
+-                            } else if (l_data[i].equals("-remove")) {
+-                                if (GameHelper.isAlphabetic(l_data[i + 1])) {
+-                                    l_continentId = l_data[i + 1];
+-                                }
+-                                else
+-                                    System.out.println("----- Continent ID is not valid !!! --------");
+-
+-                                boolean l_check = d_RunG.removeContinent(d_Map, l_continentId);
+-                                if (l_check) {
+-                                    System.out.println("-------- Continent removed from the Map !!! --------");
+-                                    d_GameGamePhase = GamePhase.EDITMAP;
+-                                } else
+-                                    System.out.println("-------- Continent ID does not exists. Please enter a valid continent ID !!! --------\n");
+-                            }
+-                        }
+-                    }
+-                    catch(ArrayIndexOutOfBoundsException | NumberFormatException e) {
+-                        System.out.println("---- Invalid command format. Should be: \"editcontinent -add continentID controlvalue , -remove continentID. \"----\n");
+-                    } catch(Exception e) {
+-                        System.out.println("---- Invalid command format. Should be: \"editcontinent -add continentID controlvalue , -remove continentID. \"----\n");
+-                    }
+                     break;
+ 
+                 case "editcountry":
+-                    try {
+-                        for (int i = 1; i < l_data.length; i++) {
+-                            if (l_data[i].equals("-add")) {
+-                                if (GameHelper.isAlphabetic(l_data[i + 1]) || GameHelper.isAlphabetic(l_data[i + 2])) {
+-                                    l_territoryId = l_data[i + 1];
+-                                    l_continentId = l_data[i + 2];
+-                                } else {
+-                                    System.out.println("----- Territory ID is not valid !!! --------");
+-                                }
+-                                boolean l_check = d_RunG.addTerritory(d_Map, l_territoryId, l_continentId);
+-                                if (l_check) {
+-                                    System.out.println("-------- Territory " + l_territoryId + " added to the map !!! --------");
+-                                    d_GameGamePhase = GamePhase.EDITMAP;
+-                                } else {
+-                                    System.out.println("-------- Territory ID already exists. Please enter a valid Territory !!! --------\n");
+-                                }
+-                            } else if (l_data[i].equals("-remove")) {
+-                                if (GameHelper.isAlphabetic(l_data[i + 1])) {
+-                                    l_territoryId = l_data[i + 1];
+-                                }
+-                                else {
+-                                    System.out.println("----- Territory ID is not valid !!! --------");
+-                                }
+-                                boolean l_check = d_RunG.removeTerritory(d_Map, l_territoryId);
+-                                if (l_check) {
+-                                    System.out.println("-------- Territory removed from the Map !!! --------");
+-                                    d_GameGamePhase = GamePhase.EDITMAP;
+-                                } else {
+-                                    System.out.println("-------- Territory ID does not exists. Please enter a valid continent ID !!! --------\n");
+-                                }
+-                            }
+-                        }
+-                    }
+-                    catch(ArrayIndexOutOfBoundsException e) {
+-                        System.out.println("---- Invalid command format. Should be: \"editcountry -add countryId continentId , -remove countryId \"----\n");
+-                    }
+-                    catch(Exception e) {
+-                        System.out.println("---- Invalid command format. Should be: \"editcountry -add countryId continentId , -remove countryId \"----\n");
+-                    }
++                    setPhase(new Load(this));
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.editCountry(l_data, l_continentId, l_countryId) ;
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    String str1= d_GamePhases.getD_PhaseName();
++                    System.out.println(str1);
+                     break;
+ 
+                 case "editneighbor":
+-                    try {
+-                        for (int i = 1; i < l_data.length; i++) {
+-                            if (l_data[i].equals("-add")) {
+-                                if (GameHelper.isAlphabetic(l_data[i + 1]) || GameHelper.isAlphabetic(l_data[i + 2])) {
+-                                    l_territoryId = l_data[i + 1];
+-                                    l_neighbourTerritoryId = l_data[i + 2];
+-                                } else {
+-                                    System.out.println("----- Territory ID is not valid !!!  -----");
+-                                }
++                    setPhase(new Load(this));
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.editNeighbour(l_data, l_countryId, l_neighbourTerritoryId);
++                    String str2= d_GamePhases.getD_PhaseName();
++                    System.out.println(str2);
+ 
+-                                boolean l_check = d_RunG.addNeighbour(d_Map, l_territoryId, l_neighbourTerritoryId);
+-                                if (l_check) {
+-                                    d_GameGamePhase = GamePhase.EDITMAP;
+-                                } else {
+-                                    System.out.println("----- Territory doesn't exist - Enter valid territoryID and neighbourTerritoryID -----");
+-                                }
+-                            } else if (l_data[i].equals("-remove")) {
+-                                if (GameHelper.isAlphabetic(l_data[i + 1]) || GameHelper.isAlphabetic(l_data[i + 2])) {
+-                                    l_territoryId = l_data[i + 1];
+-                                    l_neighbourTerritoryId = l_data[i + 2];
+-                                } else {
+-                                    System.out.println("----- Territory ID is not valid !!!  -----");
+-                                }
+-
+-                                boolean l_check = d_RunG.removeNeighbour(d_Map, l_territoryId, l_neighbourTerritoryId);
+-                                if (l_check) {
+-                                    d_GameGamePhase = GamePhase.EDITMAP;
+-                                } else
+-                                    System.out.println("----- Territory doesn't exist - Enter valid territoryID and neighbourTerritoryID -----\n");
+-                            }
+-                        }
+-                    }
+-                    catch(ArrayIndexOutOfBoundsException e) {
+-                        System.out.println("----- Invalid command format. Should be: editneighbor -add countryID neighborcountryID, -remove countryID neighborcountryID ----");
+-                    }
+-                    catch(Exception e) {
+-                        System.out.println("----- Invalid command format. Should be: editneighbor -add countryID neighborcountryID, -remove countryID neighborcountryID ----");
+-                    }
+                     break;
++
+                 case "savemap":
+-                    try {
+-                        if (l_data[1] != "") {
+-                            if (GameHelper.isValidMap(l_data[1])) {
+-                                l_mapName = l_data[1];
+-                                boolean l_check = d_RunG.saveMap(d_Map, l_mapName);
+-                                if (l_check) {
+-                                    System.out.println("----- Map file is saved successfully !!!! -----");
+-                                    d_GameGamePhase = GamePhase.EDITMAP;
+-                                } else
+-                                    System.out.println("---- Invalid Map !!! * Cannot be saved * -----");
+-                            } else
+-                                System.out.println("----- Map name is not valid !!!! -----");
+-                        }
+-                    }
+-                    catch(ArrayIndexOutOfBoundsException e) {
+-                        System.out.println("----- Invalid command format. Should be: savemap filename ----");
+-                    }
+-                    catch(Exception e) {
+-                        System.out.println("----- Invalid command format. Should be: savemap filename -----");
+-                    }
++                    setPhase(new Load(this));
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.savemap(l_data, l_mapName);
++                    String str3= d_GamePhases.getD_PhaseName();
++                    System.out.println(str3);
++
+                     break;
+ 
+                 case "showmap":
+-                    System.out.println("----- Displaying the Map Below ------ \n");
+-                    ShowMap.showMap(d_Map);
++                    setPhase(new Load(this));
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.showMap(d_Map);
++                    String str4= d_GamePhases.getD_PhaseName();
++                    System.out.println(str4);
++                    // d_RunG.showMap(d_Map);
+                     d_GameGamePhase = GamePhase.EDITMAP;
+-                    break;
+-
+-                case "editmap":
+-                    try {
+-                        if (l_data[1] != null) {
+-                            if (GameHelper.isValidMap(l_data[1])) {
+-                                l_mapName = l_data[1];
+-                                d_Map = d_RunG.editMap(l_mapName);
+-                                System.out.println("----- Initiate the editing process   " + l_mapName+" -----");
+-                                d_GameGamePhase = GamePhase.EDITMAP;
+-                            } else
+-                                System.out.println("----- Map is not valid !!!! -----");
+-                        }
+-                    }
+-                    catch(ArrayIndexOutOfBoundsException e) {
+-                        System.out.println("----- Invalid command format. Should be: editmap sample.map ----");
+-                    }
+-                    catch(Exception e) {
+-                        System.out.println("----- Invalid command format. Should be: editmap sample.map ----");
+-                    }
+-                    break;
+-
+-                case "loadmap":
+-                    try {
+-                        if (l_data[1] != "") {
+-                            if (GameHelper.isValidMap(l_data[1])) {
+-                                l_mapName = l_data[1];
+-                                d_Map = d_RunG.loadMap(l_mapName);
+-                                if (d_Map != null) {
+-                                    if (!d_Map.d_Valid) {
+-                                        System.out.println("----- Map is not valid !!!! -----");
+-                                        d_GameGamePhase = GamePhase.NULL;
+-                                    } else {
+-                                        System.out.println("----- Map Validated !!!! -----");
+-                                        System.out.println("----  You can start adding players :- !!!! ----");
+-                                        d_GameGamePhase = GamePhase.STARTUP;
+-                                    }
+-                                } else {
+-                                    d_GameGamePhase = GamePhase.NULL;
+-                                }
+-                            } else
+-                                System.out.println("----- Map is not valid !!!! -----");
+-                        }
+-                    }
+-                    catch(ArrayIndexOutOfBoundsException e) {
+-                        System.out.println("----- Invalid command format. Should be: loadmap sample.map ----");
+-                    }
+-                    catch(Exception e) {
+-                        System.out.println("----- Invalid command format. Should be: loadmap sample.map ----");
+-                    }
+                     break;
+ 
+                 case "validatemap":
+-                    if(d_RunG.validateMap(d_Map)) {
+-                            System.out.println("----- Map Validated !!!! -----");
+-                    }
+-                    else {
+-                        System.out.println("----- Map is not valid !!!! -----");
+-                    }
++                    setPhase(new Load(this));
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.validatemap();
++                    String strValidate= d_GamePhases.getD_PhaseName();
++                    System.out.println(strValidate);
++
+                     break;
+ 
+                 default:
+-                    System.out.println("----- Invalid command format. \n Either use | edit commands :(editcontinent/editterritory/editneighbour)| or savemap| validatemap | editmap | loadmap | showmap command.");
++                    System.out.println("---- Invalid command format. Should be:  edit commands(editcontinent/editcountry/editneighbor) or savemap/validatemap/editmap/loadmap/showmap command");
++                    d_LogEntry.setMessage("---- Invalid command format. Should be: edit commands(editcontinent/editcountry/editneighbor) or savemap/validatemap/editmap/loadmap/showmap command");
+                     break;
+             }
+         }
+         else if (d_GameGamePhase.equals(GamePhase.STARTUP)) {
+             switch (l_commandName) {
+                 case "gameplayer":
+-                    try {
+-                        for (int i = 1; i < l_data.length; i++) {
+-                            if (l_data[i].equals("-add")) {
+-                                if (GameHelper.isValidPlayer(l_data[i + 1])) {
+-                                    l_playerName = l_data[i + 1];
+-                                    boolean l_check = d_StartUpPhase.addPlayer(d_Players, l_playerName);
+-                                    if (l_check) {
+-                                        System.out.println("------- Player is added !!!! ---- ");
+-                                        System.out.println("------- Maximum 5 can be added !!! ---- ");
+-                                    } else {
+-                                        System.out.println("------- The 5-player maximum has been met, and no further players can be accommodated !!!! ---- ");
+-                                    }
+-                                    d_GameGamePhase = GamePhase.STARTUP;
+-                                } else {
+-                                    System.out.println("-------Player Name is not valid !!!! ---- ");
+-                                }
+-                            } else if (l_data[i].equals("-remove")) {
+-                                if (GameHelper.isValidPlayer(l_data[i + 1])) {
+-                                    l_playerName = l_data[i + 1];
+-                                    boolean l_check = d_StartUpPhase.removePlayer(d_Players, l_playerName);
+-                                    if (l_check)
+-                                        System.out.println("------- Player is removed !!!! ---- ");
+-                                    else
+-                                        System.out.println("------- Player doesn't exist !!! ----");
+-                                    d_GameGamePhase = GamePhase.STARTUP;
+-                                } else
+-                                    System.out.println("-------Player Name is not valid !!!! ---- ");
+-                            }
+-                        }
+-                    }
+-                    catch(ArrayIndexOutOfBoundsException e) {
+-                        System.out.println("----- Invalid command format. Should be:  gameplayer -add playername,  -remove playername ----- ");
+-                    }
+-                    catch(Exception e) {
+-                        System.out.println("----- Invalid command format. Should be:  gameplayer -add playername,  -remove playername ----- ");
+-                    }
++                    setPhase(new StartUpPhase(this));
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                    d_GamePhases.gamePlayer(l_data,d_Players, l_playerName);
++                    String str= d_GamePhases.getD_PhaseName();
++                    System.out.println(str);
+                     break;
+ 
+                 case "assigncountries":
+-                    boolean l_check = d_StartUpPhase.assignTerritories(d_Map, d_Players);
++                    boolean l_check = d_GamePhases.assignCountries(d_Map, d_Players);
+                     if (l_check) {
+                         System.out.println("----- Territories have been randomly allocated to the players  ----- ");
+-                        d_GameGamePhase = GamePhase.ISSUE_ORDERS;
++                        d_LogEntry.setMessage("----- Territories have been randomly allocated to the players  ----- ");
++                        setPhase(new MainPlayPhase(this));
++                        d_LogEntry.setGamePhase(d_GamePhases);
++                        d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
++                        d_GamePhases.reinforce();
++                        String str1= d_GamePhases.getD_PhaseName();
++                        System.out.println(str1);
+                     }
+                     d_GameGamePhase = GamePhase.ISSUE_ORDERS;
+                     break;
+ 
+                 case "showmap":
+-                    ShowMap.showMapWithArmies(d_Players, d_Map);
++                    d_GamePhases.showMap(d_Players,d_Map);
++                    String str2= d_GamePhases.getD_PhaseName();
++                    System.out.println(str2);
++                    d_LogEntry.setGamePhase(d_GamePhases);
++                    d_LogEntry.setCommand("-------- "+l_commandName+" Command is being executed!!! --------\n");
+                     break;
+ 
+                 default:
+@@ -377,6 +261,7 @@
+             System.out.println("----- Combined armies remaining across all players in the pool "+l_counter+" -----");
+             if(l_counter > 0){
+                 switch (l_commandName) {
++
+                     case "deploy":
+                         try {
+                             if (!(l_data[1] == null) || !(l_data[2] == null)) {
+@@ -388,7 +273,7 @@
+                                     boolean l_checkOwnedTerritory = p_player.getOwnedTerritories().containsKey(l_territoryId.toLowerCase());
+                                     boolean l_checkArmies = (p_player.getOwnedArmies() >= l_numberOfArmies);
+                                     System.out.println("----- Player "+p_player.getPlayerName()+"  Can provide deploy order or pass order ----");
+-                                    if(l_checkOwnedTerritory && l_checkArmies){
++                                    if(l_checkOwnedTerritory && l_checkArmies) {
+                                         Order l_temp = new Order(p_player, l_territoryId, l_numberOfArmies);
+                                         p_player.addOrder(l_temp);
+                                         p_player.issue_order();
+@@ -408,8 +293,262 @@
+                             System.out.println("--- Pass to next player if no territory owned or insufficient army units ---- \n");
+                         }
+                         break;
++
++                    case "advance":
++//                        d_LogEntry.setCommand(l_commandName+" Command is being executed");
++                        try {
++                            if (!(l_data[1] == null) || !(l_data[2] == null) || !(l_data[3] == null)) {
++                                if (GameHelper.isAlphabetic(l_data[1]) || GameHelper.isAlphabetic(l_data[2]) || GameHelper.isNumeric(l_data[3])) {
++                                    l_countryNameFrom = l_data[1];
++                                    l_countryNameTo = l_data[2];
++                                    l_numberOfArmies = Integer.parseInt(l_data[3]);
++                                    System.out.println(l_numberOfArmies);
++                                    boolean l_checkOwnedCountry = p_player.getOwnedTerritories().containsKey(l_countryNameFrom.toLowerCase());
++                                    System.out.println(l_checkOwnedCountry);
++                                    TerritoryDetails attackingCountry = p_player.getOwnedTerritories().get(l_countryNameFrom.toLowerCase());
++                                    TerritoryDetails defendingCountry = attackingCountry.getNeighbours().get(l_countryNameTo.toLowerCase());
++                                    boolean l_checkNeighbourCountry = (l_countryNameTo.equals(defendingCountry.getTerritoryID()));
++                                    System.out.println(l_checkNeighbourCountry);
++
++                                    //Checks if required armies present on Source territory
++                                    TerritoryDetails l_c= p_player.getOwnedTerritories().get(l_countryNameFrom.toLowerCase());
++                                    int l_existingArmies = l_c.getNumberOfArmies();
++                                    System.out.println(l_existingArmies);
++                                    Player l_targetPlayer = null;
++                                    for(Player temp : d_Players){
++                                        //check which player has target countryID
++                                        if(temp.getOwnedTerritories().containsKey(l_countryNameTo.toLowerCase())){
++                                            l_targetPlayer = temp;
++                                            break;
++                                        }
++                                    }
++
++                                    boolean l_checkArmies = (l_existingArmies >= l_numberOfArmies);
++                                    System.out.println("Test "+l_checkNeighbourCountry+"Test 1 "+l_checkOwnedCountry+"Test 2 "+l_checkArmies);
++                                    if(l_checkOwnedCountry && l_checkNeighbourCountry && l_checkArmies){
++                                        p_player.addOrder(new Advance(p_player, l_countryNameFrom,l_countryNameTo, l_numberOfArmies,l_targetPlayer));
++                                        p_player.issue_order();
++//                                        d_LogEntry.setMessage(p_player.getPlayerName()+" advance order added to Players OrdersList: "+l_data[0]+"  "+l_data[1]+" "+l_data[2]);
++                                    }
++                                    else{
++                                        System.out.println("Country not owned by player or target Country not adjacent or insufficient Army units | please pass to next player");
++//                                        d_LogEntry.setMessage("Country not owned by player or target Country not adjacent or insufficient Army units | please pass to next player");
++                                    }
++                                    d_GameGamePhase = GamePhase.TURN;
++                                    break;
++                                }
++                            } else
++                                System.out.println("Invalid Command");
++//                            d_LogEntry.setMessage("Invalid Command");
++                        }catch (Exception e) {
++                            System.out.println("Country not owned by player or target Country not adjacent or insufficient Army units | please pass to next player");
++//                            d_LogEntry.setMessage("Country not owned by player or target Country not adjacent or insufficient Army units | please pass to next player");
++                        }
++                        break;
++
++                    case "bomb":
++//                        d_LogEntry.setCommand(l_commandName+" Command is being executed");
++                        try {
++                            if (!(l_data[1] == null)) {
++                                if (GameHelper.isAlphabetic(l_data[1])) {
++                                    l_countryId = l_data[1];
++                                    //checks if countryId is not of current player
++                                    boolean l_checkOwnedCountryNotOfCurrent = !p_player.getOwnedTerritories().containsKey(l_countryId.toLowerCase());
++                                    boolean targetCountryNeighbour = false;
++                                    //checks if target country id is neighbour to one of current player's country
++                                    for(TerritoryDetails cD : p_player.getOwnedTerritories().values()){
++                                        if( cD.getNeighbours().containsKey(l_countryId.toLowerCase()) && !p_player.getOwnedTerritories().containsKey(l_countryId.toLowerCase())){
++                                            targetCountryNeighbour= true;
++                                            break;
++                                        }
++                                    }
++                                    Player targetPlayer = null;
++                                    for(Player temp : d_Players){
++
++                                        //check which player has target countryID
++                                        if(temp.getOwnedTerritories().containsKey(l_countryId.toLowerCase())){
++                                            targetPlayer = temp;
++                                            break;
++                                        }
++                                    }
++                                    boolean checkCard = p_player.doesCardExists("Bomb");
++                                    if(l_checkOwnedCountryNotOfCurrent && targetCountryNeighbour && checkCard){
++                                        //need to send target player instead of current player as param
++                                        p_player.addOrder(new Bomb(p_player,targetPlayer, l_countryId));
++                                        p_player.issue_order();
++//                                        d_LogEntry.setMessage(p_player.getPlayerName()+" Bomb order added to Players OrdersList: "+l_data[0]+"  "+l_data[1]);
++                                        p_player.removeCard("Bomb");
++//                                        d_LogEntry.setMessage("Bomb card removed from players card list");
++                                    }
++                                    else{
++                                        System.out.println("Bomb Card not Owned or Country owned by current player or target Country not adjacent | please pass to next player");
++//                                        d_LogEntry.setMessage("Bomb Card not Owned or Country owned by current player or target Country not adjacent | please pass to next player");
++                                    }
++                                    d_GameGamePhase = GamePhase.TURN;
++                                    break;
++                                }
++                            } else
++                                System.out.println("Invalid Command");
++//                            d_LogEntry.setMessage("Invalid Command");
++                        }catch (Exception e) {
++                            System.out.println("Bomb Card not Owned or Country owned by current player or target Country not adjacent | please pass to next player");
++//                            d_LogEntry.setMessage("Bomb Card not Owned or Country owned by current player or target Country not adjacent | please pass to next player");
++                        }
++                        break;
++
++                    case "blockade":
++//                        d_LogEntry.setCommand(l_commandName+" Command is being executed");
++                        try {
++                            if (!(l_data[1] == null)) {
++                                if (GameHelper.isAlphabetic(l_data[1])) {
++                                    l_countryId = l_data[1];
++                                    boolean l_checkOwnedCountry = p_player.getOwnedTerritories().containsKey(l_countryId.toLowerCase());
++                                    boolean checkCard = p_player.doesCardExists("Blockade");
++                                    if(l_checkOwnedCountry && checkCard){
++                                        p_player.addOrder(new Blockade(p_player, l_countryId));
++                                        p_player.issue_order();
++//                                        d_LogEntry.setMessage(p_player.getPlayerName()+" Blockade order added to Players OrdersList: "+l_data[0]+"  "+l_data[1]);
++                                        p_player.removeCard("Blockade");
++//                                        d_LogEntry.setMessage("Bloackade card removed from Player's cardList ");
++                                    }
++                                    else{
++                                        System.out.println("Blockade Card not Owned or Country not owned by current player | please pass to next player");
++//                                        d_LogEntry.setMessage("Blockade Card not Owned or Country not owned by current player | please pass to next player");
++                                    }
++                                    d_GameGamePhase = GamePhase.TURN;
++                                    break;
++                                }
++                            } else
++                                System.out.println("Invalid Command");
++//                            d_LogEntry.setMessage("Invalid Command");
++                        }catch (Exception e) {
++                            System.out.println("Blockade Card not Owned or Country not owned by current player | please pass to next player");
++//                            d_LogEntry.setMessage("Blockade Card not Owned or Country not owned by current player | please pass to next player");
++                        }
++                        break;
++
++                    case "airlift":
++//                        d_LogEntry.setCommand(l_commandName+" Command is being executed");
++                        try {
++                            if (!(l_data[1] == null) || !(l_data[2] == null) || !(l_data[3] == null)) {
++                                if (GameHelper.isAlphabetic(l_data[1]) || GameHelper.isAlphabetic(l_data[2]) || GameHelper.isNumeric(l_data[3])) {
++                                    l_sourceCountryId = l_data[1];
++                                    l_targetCountryId = l_data[2];
++                                    l_numberOfArmies = Integer.parseInt(l_data[3]);
++                                    boolean l_checkOwnedCountry = p_player.getOwnedTerritories().containsKey(l_sourceCountryId.toLowerCase());
++                                    boolean l_checkTargetOwnedCountry = p_player.getOwnedTerritories().containsKey(l_targetCountryId.toLowerCase());
++
++                                    //check armies from map which are deployed on source Country
++                                    TerritoryDetails l_c= p_player.getOwnedTerritories().get(l_sourceCountryId.toLowerCase());
++                                    int l_existingArmies = l_c.getNumberOfArmies();
++                                    boolean l_checkArmies = (l_existingArmies >= l_numberOfArmies);
++                                    boolean checkCard = p_player.doesCardExists("Airlift");
++                                    if(l_checkOwnedCountry && l_checkTargetOwnedCountry && l_checkArmies && checkCard){
++                                        p_player.addOrder(new Airlift(p_player, l_sourceCountryId, l_targetCountryId, l_numberOfArmies));
++                                        p_player.issue_order();
++//                                        d_LogEntry.setMessage(p_player.getPlayerName()+" Airlift order added to Players OrdersList: "+l_data[0]+"  "+l_data[1]+" "+l_data[2]+" "+l_data[3]);
++                                        p_player.removeCard("Airlift");
++//                                        d_LogEntry.setMessage("Airlift card removed from Player's cardList ");
++                                    }
++                                    else{
++                                        System.out.println("Airlift Card not Owned or Source Country or Target Country not owned by player insufficient Army units | please pass to next player");
++//                                        d_LogEntry.setMessage("Airlift Card not Owned or Source Country or Target Country not owned by player insufficient Army units | please pass to next player");
++                                    }
++                                    d_GameGamePhase = GamePhase.TURN;
++                                    break;
++                                }
++                            } else
++                                System.out.println("Invalid Command");
++//                            d_LogEntry.setMessage("Invalid Command");
++                        }catch (Exception e) {
++                            System.out.println("Airlift Card not Owned or Source Country or Target Country not owned by player insufficient Army units | please pass to next player");
++//                            d_LogEntry.setMessage("Airlift Card not Owned or Source Country or Target Country not owned by player insufficient Army units | please pass to next player");
++                        }
++                        break;
++                    case "negotiate":
++//                        d_LogEntry.setCommand(l_commandName+" Command is being executed");
++                        try {
++                            if (!(l_data[1] == null)){
++                                if (GameHelper.isAlphabetic(l_data[1])) {
++                                    Player l_NegPlayer = getPlayerByName(l_data[1]);
++                                    boolean checkCard = p_player.doesCardExists("Diplomacy");
++                                    if(checkCard){
++                                        p_player.addOrder(new Diplomacy(p_player, l_NegPlayer));
++                                        p_player.issue_order();
++//                                        d_LogEntry.setMessage(p_player.getPlayerName()+" Diplomacy order added to Players OrdersList: "+l_data[0]+"  "+l_data[1]+" "+l_data[2]+" "+l_data[3]);
++                                        p_player.removeCard("Diplomacy");
++//                                        d_LogEntry.setMessage("Diplomacy card removed from Player's cardList ");
++                                    }
++                                }
++                            } else
++                                System.out.println("Diplomacy Card not Owned or Invalid Command");
++//                            d_LogEntry.setMessage("Diplomacy Card not Owned or Invalid Command");
++                        }catch (Exception e) {
++                            System.out.println("Diplomacy Card not Owned or Invalid Player name");
++//                            d_LogEntry.setMessage("Diplomacy Card not Owned or Invalid Player name");
++                        }
++                        break;
++                    case "execute":
++                        int l_count = 0;
++                        for (Player l_p : d_Players) {
++                            Queue<order1> l_temp = l_p.getD_orderList();
++                            l_count = l_count +l_temp.size();
++                        }
++
++                        if(l_count == 0){
++                            System.out.println(" -----  Orders already executed !!!  ----- ");
++                            ShowMap.showMap(d_Players, d_Map);
++                            d_GameGamePhase = GamePhase.ISSUE_ORDERS;
++                            return d_GameGamePhase;
++                        }
++                        else{
++                            System.out.println(" -----  Total Orders  :" + l_count + " -----");
++                            while (l_count != 0) {
++                                for (Player l_p : d_Players) {
++
++                                    Queue<order1> l_temp = l_p.getD_orderList();
++                                    if (l_temp.size() > 0) {
++                                        order1 l_toRemove = l_p.next_order();
++                                        System.out.println("----- Order: " +l_toRemove+ " executed for player: "+l_p.getPlayerName()+ " -----");
++                                        l_toRemove.execute();
++                                    }
++                                }
++                                l_count--;
++                            }
++
++                            System.out.println("-----  Orders executed!!! -----");
++                            ShowMap.showMap(d_Players, d_Map);
++                            d_GameGamePhase = GamePhase.ISSUE_ORDERS;
++                            for (Player l_p : d_Players){
++                                if(l_p.getOwnedTerritories().size() == d_Map.getTerritories().size()){
++                                    System.out.println(l_p.getPlayerName()+" has Won the Game!");
++//                                    d_LogEntry.setMessage(l_p.getPlayerName()+" has Won the Game!");
++//                                    d_LogEntry.detach(d_WriteLog);
++                                    System.exit(0);
++                                }
++                            }
++                            //check if any player needs to be removed as of losing all territories
++                            for (Player l_p : d_Players){
++                                if(l_p.getOwnedTerritories().size() == 0){
++                                    System.out.println(l_p.getPlayerName()+" has lost all its territories and is no longer part of the game");
++//                                    d_LogEntry.setMessage(l_p.getPlayerName()+" has lost all its territories and is no longer part of the game");
++                                    d_Players.remove(l_p);
++                                }
++                            }
++
++                            System.out.println("Current Orders were executed,Starting again with assigning Reinforcements!");
++                            System.out.println("Reinforcements assigned! Players can provide deploy Orders now!");
++                            System.out.println("\nPlayer 1 can provide deploy | pass order..");
++//                            d_LogEntry.setMessage("Current Orders were executed,Starting again with assigning Reinforcements!");
++//                            d_LogEntry.setMessage("Reinforcements assigned! Players can provide deploy Orders now!");
++//                            d_LogEntry.setMessage("\nPlayer 1 can provide deploy | pass order..");
++
++                            d_GameGamePhase = GamePhase.ISSUE_ORDERS;
++                        }
++                        break;
++
+ 
+-                case "pass":
++                    case "pass":
+                     try {
+                         d_GameGamePhase = GamePhase.TURN;
+                     }catch (Exception e) {
+@@ -418,11 +557,12 @@
+                     break;
+ 
+                 case "showmap":
+-                    ShowMap.showMapWithArmies(d_Players, d_Map);
++                    d_GamePhases.showMap(d_Players, d_Map);
+                     break;
+ 
+                 default:
+-                    System.out.println("----- Invalid command format. Should be:| deploy | pass | showmap | commands in ISSUE_ORDERS Phase -----");
++                    System.out.println("----- Invalid command - either use deploy | pass | showmap commands in ISSUE_ORDERS InternalPhase -------");
++                    d_LogEntry.setMessage("------ Invalid command - either use deploy | pass | showmap commands in ISSUE_ORDERS InternalPhase -------");
+                     break;
+             }
+         }
+@@ -437,13 +577,13 @@
+                 case "execute":
+                     int l_count = 0;
+                     for (Player l_p : d_Players) {
+-                        Queue<Order> l_temp = l_p.getD_orderList();
++                        Queue<order1> l_temp = l_p.getD_orderList();
+                             l_count = l_count +l_temp.size();
+                         }
+ 
+                     if(l_count == 0){
+                         System.out.println(" -----  Orders already executed !!!  ----- ");
+-                        ShowMap.showMapWithArmies(d_Players, d_Map);
++                        ShowMap.showMap(d_Players, d_Map);
+                         d_GameGamePhase = GamePhase.ISSUE_ORDERS;
+                         return d_GameGamePhase;
+                     }
+@@ -452,9 +592,9 @@
+                         while (l_count != 0) {
+                             for (Player l_p : d_Players) {
+ 
+-                                Queue<Order> l_temp = l_p.getD_orderList();
++                                Queue<order1> l_temp = l_p.getD_orderList();
+                                 if (l_temp.size() > 0) {
+-                                    Order l_toRemove = l_p.next_order();
++                                    order1 l_toRemove = l_p.next_order();
+                                     System.out.println("----- Order: " +l_toRemove+ " executed for player: "+l_p.getPlayerName()+ " -----");
+                                     l_toRemove.execute();
+                                 }
+@@ -463,17 +603,17 @@
+                         }
+ 
+                         System.out.println("-----  Orders executed!!! -----");
+-                        ShowMap.showMapWithArmies(d_Players, d_Map);
++                        ShowMap.showMap(d_Players, d_Map);
+                         d_GameGamePhase = GamePhase.ISSUE_ORDERS;
+                     }
+                     break;
+ 
+                 case "showmap":
+-                    ShowMap.showMapWithArmies(d_Players, d_Map);
++                    ShowMap.showMap(d_Players, d_Map);
+                     break;
+ 
+                 case "exit":
+-                    System.out.println(" ----- [ END OF BUILD 1 ] ------- ");
++                    System.out.println(" ----- [ END OF BUILD 2 ] ------- ");
+                     exit(0);
+ 
+                 default:
+@@ -483,4 +623,11 @@
+         }
+             return d_GameGamePhase;
+     }
++    private Player getPlayerByName(String p_playerName) {
++        for(Player l_player:d_Players) {
++            if(l_player.getPlayerName().equals(p_playerName))
++                return l_player;
++        }
++        return null;
++    }
+ }
+diff --git a/my-app/.idea/libraries/Maven__junit_junit_4_11.xml b/.idea/libraries/Maven__junit_junit_4_11.xml
+rename from my-app/.idea/libraries/Maven__junit_junit_4_11.xml
+rename to .idea/libraries/Maven__junit_junit_4_11.xml

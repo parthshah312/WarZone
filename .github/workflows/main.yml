@@ -1,0 +1,40 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Compile project
+        run: |
+          ./mvnw compile
+
+      - name: Run unit tests
+        run: |
+          ./mvnw test
+
+      - name: Generate Javadoc
+        run: |
+          ./mvnw javadoc:javadoc
+
+      - name: Archive Javadoc
+        uses: actions/upload-artifact@v2
+        with:
+          name: javadoc
+          path: target/site/apidocs
